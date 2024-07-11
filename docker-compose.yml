@@ -1,0 +1,24 @@
+services:
+
+  web:
+    image: nginx:1
+    container_name: web
+    ports:
+      - 80:80
+      - 443:443
+        
+  api:
+    image: api:1
+    container_name: api
+    environment:
+      - PORT=8000
+    ports:
+      - 8000:8000
+
+  landing:
+    image: landing:1
+    container_name: landing
+    environment:
+      - PORT=3001
+    ports:
+      - 3001:3001
