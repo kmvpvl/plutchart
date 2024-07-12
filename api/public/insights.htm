@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="stylesheet" href="plutchik.css"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script src="mlstrings.js"></script>
+<style>
+* {
+    box-sizing: border-box;
+}    
+html, body {
+    font-family: "UbuntuMono", monospace;
+    min-height: 100%;
+    max-height: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    width: 100%;
+    height:100%;
+    margin: 0;
+    color: var(--tg-theme-text-color);
+    background-color: var(--tg-theme-bg-color);
+}
+body {
+    padding: 5px;
+}
+.disabled{
+  fill:silver;
+  background-color:silver;
+}
+.flower {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+.content {
+    min-height: 100%;
+    max-height: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    overflow:hidden;
+    width: 100%;
+    height:100%;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto auto 1fr auto auto; /* 1fr auto;*/
+}
+.header {
+    text-align: center;
+    font-size: x-large;
+}
+.separator {
+    border-top: 1px solid var(--tg-theme-text-color);
+    margin-top: 5px;
+}
+.prompt {
+    font-size:medium;
+    text-align: justify;
+    word-wrap: break-word;
+}
+.diff-element {
+    padding: 3px;
+    margin: 3px;
+}
+.decoding-container{
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    min-width: 100%;
+    min-height: 100%;
+    display: none;
+    background-color: var(--tg-theme-bg-color);
+    --padding: 2px;
+}
+.decoding {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    min-width: 100%;
+    min-height: 100%;
+    display: grid;
+    overflow: hidden;
+    grid-template-rows: auto auto auto 1fr;
+    gap: 5px;
+}
+.decoding-tip {
+    font-size: small;
+}
+#decoding-emotion {
+    font-size: xx-large;
+    padding: 2px;
+}
+#thumbs {
+    display: flex;
+    overflow-x: scroll;
+    flex-flow: row;
+    flex-wrap: nowrap;
+    gap: 10px;
+    min-height: 40px;
+}
+#btnBack {
+    cursor: pointer;
+    border: 1px solid var(--tg-theme-text-color);
+    padding: 2px;
+    border-radius: 5px;
+}
+svg g[emotion] {
+    cursor: pointer;
+}
+div.thumb {
+    width: 40px;
+    min-width: 40px;
+    overflow: hidden;
+    padding: 2px;
+    border: 1px dashed var(--tg-theme-text-color);
+    border-radius: 2px;
+    text-align: center;
+    cursor: pointer;
+    opacity: 0.6;
+}
+div.thumb.selected {
+    border-style: solid;
+    opacity: 1;
+}
+img.thumb {
+    height: 40px;
+}
+
+div.fit-img {
+    min-height: 100%;
+    max-height: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+
+img.fit-img {
+    border: 1px solid var(--tg-theme-text-color);
+    max-height: 100%;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#decoding-content {
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    gap: 2px;
+    min-height: 100%;
+    max-height: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    width: 100%;
+    height: 100%;
+}
+
+.decoding-contentitem-name {
+    font-size: x-large;
+    text-align: center;
+}
+
+</style>
+</head>
+<body>
+<div class="content">
+    <div id="prompt" class="prompt"></div>
+    <div id="diff_desc" class="prompt"></div>
+    <div id="flower_own" class="flower"></div>
+    <div id="own-header" class="header"></div>
+    <div id="separator" class="separator"></div>
+    <div id="flower_others" class="flower"></div>
+    <div id="others-header" class="header"></div>
+    <!--span id="separator" class="separator"></span>
+    <span id="flower_diff" class="flower"></span>
+    <span id="diff-header" class="header"></span-->
+</div>
+<div class="decoding-container">
+    <div class="decoding">
+        <div>
+            <span id="btnBack"></span>
+            <span id="decoding-emotion">Emotion</span>
+        </div>
+        <div class="decoding-tip"></div>
+        <div id="thumbs">
+
+        </div>
+        <div id="decoding-content"></div>
+    </div>
+</div>
+<script>
+const emotions = ['joy','trust','fear','surprise','sadness','disgust','anger','anticipation'];
+
+let tg = window.Telegram.WebApp;
+tg.MainButton.hide();
+
+function drawDiff(element, vector, lang='en') {
+    let s = '';
+    for (i in vector) {
+        if (Math.abs(vector[i]) > 0.1) {
+            s += `<span class="${i} diff-element">${vector[i]>0?'⭡':'⭣'}${ml_emotions.get(lang).get(i)}</span>`;
+        }
+    }
+    //debugger;
+    element.html(s);
+}
+
+function init() {
+    $.ajaxSetup({
+        headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+            'plutchik-tgquerycheckstring': tg.initData,
+            'plutchik-tguid': tg.initDataUnsafe.user.id
+        }
+    });
+    $.post(`getinsights`, (data, status, xhdr)=>{
+        if ('success' == status) {
+            render(data.user.nativelanguage);
+            const diff = vector_sub(data.observe.ownVector, data.observe.othersVector);
+            $('#own-header').append(`: ${data.observe.ownVector.count}`);
+            $('#others-header').append(`: ${data.observe.othersVector.count}`);
+            drawDiff($('#diff_desc'), diff, data.user.nativelanguage);
+            drawCharts($('#flower_own'), data.observe.ownVector, data.user.nativelanguage);
+            drawCharts($('#flower_others'), data.observe.othersVector, data.user.nativelanguage);
+
+
+            $('g[emotion]').on('click', (e)=> {
+                $.ajaxSetup({
+                    headers: {
+                        'Content-Type': 'application/json; charset=utf-8',
+                        'plutchik-tgquerycheckstring': tg.initData,
+                        'plutchik-tguid': tg.initDataUnsafe.user.id
+                    }
+                });
+                $.post(`reviewemotionaboveothers`, JSON.stringify({emotion: e.currentTarget.attributes["emotion"].value}),  (data, status, xhdr)=>{
+                    const strE = e.currentTarget.attributes["emotion"].value;
+                    if ('success' == status) {
+                        $('#btnBack').text(`← ${strBack.toString(data.user.nativelanguage)}`);
+                        $('div.content').hide();
+                        $('div.decoding-container').show();
+                        $('#decoding-emotion').html(`${strEmotion.toString(data.user.nativelanguage)}: <span class="${strE}">${ml_emotions.get(data.user.nativelanguage).get(strE)}</span>`);
+                        $('.decoding-tip').text(strDecodingTip.toString(data.user.nativelanguage));
+                        $('#decoding-content').html('');
+                        $('#thumbs').html('');
+                        data.decoding.forEach((v)=>{
+                            $('#thumbs').append(`<div cid="${v.cid}" class="thumb">${v.contentitem.type==='image'?'<img class="thumb" src="'+v.contentitem.url+'">':''}${Math.round(v.diff* 100)}%</div>`);
+                        });
+                        $('div.thumb').on('click', (e)=>{
+                            $('div.thumb').removeClass('selected');
+                            e.currentTarget.classList.add('selected');
+                            const el = data.decoding.filter(v=>v.cid === e.currentTarget.attributes['cid'].value );
+                            const n = new MLString(el[0].contentitem.name);
+                            $('#decoding-content').html(`<div>${strDecodingYouFound.toString(data.user.nativelanguage)} ${ml_emotions.get(data.user.nativelanguage).get(strE)} ${Math.round(el[0].vector[strE]*100)}%. ${strDecodingOthersAssessed.toString(data.user.nativelanguage)}: ${Math.round(el[0].others.emotion*100)}%</div><div class="decoding-contentitem-name">${n.toString(data.user.nativelanguage)}</div>${el[0].contentitem.type==='image'?'<div class="fit-img"><img class="fit-img" src="'+el[0].contentitem.url+'"></div>':''}`);
+                        })
+                    } else {
+                        $('div.decoding-container').hide();
+                        $('.content').text(status);
+                    }
+                })
+                .fail((xhr, status, errorObj)=>{
+                    $('div.decoding-container').hide();
+                    $('.content').text(xhr.status);
+                });
+            });
+        } else {
+            $('.content').text(status);
+        }
+    })
+    .fail((xhr, status, errorObj)=>{
+        $('.content').text(xhr.status);
+    });
+    $('#btnBack').click(e=>{
+        $('div.decoding-container').hide();
+        $('div.content').show();
+    });
+}
+init();
+render();
+function render(lang = 'en') {
+    $('#own-header').text(myEmotions.get(lang));
+    $('#others-header').text(othersEmotions.get(lang));
+    $('#prompt').text(prompt.get(lang));
+}
+tg.expand();
+
+function drawCharts (element, emotion, lang='en') {
+	const w = element.innerWidth();
+	const h = element.innerHeight()-10;
+	const N = 8;
+    const we = w/N;
+    const wc = 20; 
+    const mm = vector_min_max(emotion);
+    const z = (mm.min > 0)?0:mm.min;
+	var s = `<svg class="flower" viewbox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="width: ${w}px;height: ${h}px;">`;
+	if (emotion) {
+		for (i=0; i<N; i++) {
+            s += `<g emotion="${emotions[i]}">`
+            let v = emotion[emotions[i]]?emotion[emotions[i]]:0;
+            v = Math.sqrt(v);
+            const y = h*(v);
+            s += `<rect class="${emotions[i]}" x="${i* we}" y="${h-y}" width="${wc}" height="${y-z*h}"></rect>`;
+            s += `<text class="${v?emotions[i]:'disabled'}" x="0" y="0" transform="rotate(270) translate(${-h},${we*i+1.5*wc})">${ml_emotions.get(lang).get(emotions[i])}</text>`;
+            s += `</g>`;
+        }
+    }
+    s += '</svg>';
+    element.html(s);
+    
+}
+
+function drawFlower (element, emotion) {
+	var w = element.innerHeight();
+	var R = w / 2;
+	var r = R * 0.6;
+	var N = 8;
+	var s = '<svg class="flower" viewbox="-'+R+' -'+R+' '+w+' '+w+'" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="width:'+w+'px;height:'+w+'px;">';
+	if (emotion) {
+		for (i=0; i<N; i++) {
+			var axis = parseFloat(emotion[emotions[i]]);
+			if (!axis) R = w/2;
+			else R = axis * w/2;
+			r = R * 0.6;
+			av = 2 * Math.PI * i / N;
+			xv = Math.round(R * Math.sin(av));
+			yv = -Math.round(R * Math.cos(av));
+			ac1 = 2 * Math.PI * i / N + Math.PI/N;
+			ac2 = 2 * Math.PI * i / N - Math.PI/N;
+			xc1 = Math.round(r * Math.sin(ac1));
+			xc2 = Math.round(r * Math.sin(ac2));
+			yc1 = -Math.round(r * Math.cos(ac1));
+			yc2 = -Math.round(r * Math.cos(ac2));
+			s += '<path class="'+(axis?emotions[i]:'dotted')+'" d="M 0,0 L '+xc1+','+yc1+' Q '+xv+','+yv+' '+xc2+','+yc2+' L 0,0 z"></path>\n';
+		}
+	}
+	s += '</svg>';
+	element.html(s);
+}
+
+function vector_sub(v1, v2) {
+    ret = {};
+    for (i in emotions) {
+        vv1 = v1[emotions[i]]?v1[emotions[i]]:0;
+        vv2 = v2[emotions[i]]?v2[emotions[i]]:0;
+        ret[emotions[i]] = vv1 - vv2;
+    }
+    return ret;
+}
+
+function vector_adjust(v) {
+    const mm = vector_min_max(v);
+    ret = {};
+    for (i in emotions) {
+        ret[emotions[i]] = v[emotions[i]] - mm.min;
+    }
+    return ret;
+}
+
+function vector_min_max(v) {
+    min = undefined;
+    max = undefined;
+    for (i in emotions) {
+        vv = v[emotions[i]]?v[emotions[i]]:0;
+        min = min!==undefined?Math.min(min, vv):vv;
+        max = max!==undefined?Math.max(max, vv):vv;
+    }
+    return {min: min, max: max};
+}
+
+function vector_norm (v){
+    ret = {};
+    const mm = vector_min_max(v);
+    for (i in emotions) {
+        vv = v[emotions[i]]?v[emotions[i]]:0;
+        ret[emotions[i]] = (vv - mm.min)/(mm.max - mm.min);
+    }
+    return ret;
+}
+
+</script>
+</body>
+</html>
