@@ -44,6 +44,11 @@ services:
   landing:
     image: landing:1
     container_name: landing
+    env_file:
+      - path: ./landing/.env
+        required: true
+      - path: ./landing/.env.development.local
+        required: false
     environment:
       - PORT=3001
     ports:
@@ -52,6 +57,11 @@ services:
   tool:
     image: tool:1
     container_name: tool
+    env_file:
+      - path: ./tool/.env
+        required: true
+      - path: ./tool/.env.development.local
+        required: false
     environment:
       - PORT=3002
     ports:
