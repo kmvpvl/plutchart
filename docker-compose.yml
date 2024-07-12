@@ -33,17 +33,13 @@ services:
       - 8000:8000
   
   mongo:
-    image: mongo:6
+    image: mongo:latest
     container_name: mongo
     restart: always
+    ports:
+      - 27017:27017
     volumes:
       - ./mongo/database:/data/db/:rw
-    healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongo mongo:27017/test --quiet
-      interval: 10s
-      timeout: 10s
-      retries: 5
-      start_period: 40s
 
   landing:
     image: landing:1
