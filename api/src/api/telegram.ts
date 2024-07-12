@@ -423,10 +423,6 @@ async function callback_process(tgData: TelegramBot.Update, bot: TelegramBot, us
     console.log(`Callback command '${callback}'`);
     // waiting command with : separator, f.e. accept_assign:userid
     // or without :, f.e. settings
-    if (user === undefined) {
-        bot.sendMessage(chat_id, "Pls register first");
-        return true;
-    }
     const cbcommand = callback.split(':');
     switch(cbcommand[0]) {
         case 'settings':
