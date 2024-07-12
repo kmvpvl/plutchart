@@ -1,4 +1,5 @@
 import mongoose, { Model, Types, connect } from "mongoose";
+import colours from "./colours";
 
 type MongoErrorCode = "settings:mongouriundefined" 
 | "mongo:connect" 
@@ -42,18 +43,15 @@ export default class MongoProto<T> {
         if (this.id === undefined) throw new MongoError("mongo:datanotloaded", `cannot return uid type='${this.constructor.name}}'; data = '${JSON.stringify(this.data)}'`);
         return this.id;
     }
-    public static connectMongo(){
+    public static async connectMongo(){
         let uri = process.env.mongouri as string;
         mongoose.set('strictQuery', false);
-        connect(uri)
-        .catch((err)=>{
-            try {
-                throw new MongoError("mongo:connect", `err=${err.message}; uri="${uri}"`)
-            } catch(e){
-                console.error(e);
-            }
-        });
-    
+        try {
+            const mongo = await connect(uri);
+            console.log(`${colours.fg.green}Connected to mongo successfully${colours.reset}`);
+        } catch (err: any) {
+            throw new MongoError("mongo:connect", `err=${JSON.stringify(err)}; uri="${uri}"`)
+        }
     }
     get json() { 
         return this.data;
