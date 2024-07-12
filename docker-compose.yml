@@ -1,0 +1,51 @@
+services:
+  web:
+    image: nginx:1
+    container_name: web
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: always
+    volumes:
+      - ./certbot/www/:/var/www/certbot/:ro
+      - ./certbot/conf/:/etc/nginx/ssl/:ro
+  #certbot:
+  #  image: certbot/certbot:latest
+  #  container_name: certbot
+  #  volumes:
+  #    - ./certbot/www/:/var/www/certbot/:rw
+  #    - ./certbot/conf/:/etc/letsencrypt/:rw
+
+  api:
+    image: api:1
+    container_name: api
+    environment:
+      - PORT=8000
+    ports:
+      - 8000:8000
+
+  landing:
+    image: landing:1
+    container_name: landing
+    environment:
+      - PORT=3001
+    ports:
+      - 3001:3001
+
+  tool:
+    image: tool:1
+    container_name: tool
+    environment:
+      - PORT=3002
+    ports:
+      - 3002:3002
+
+  wiki:
+    image: wiki:1
+    container_name: wiki
+    volumes:
+      - ./wiki/LocalSettings.php:/var/www/html/LocalSettings.php
+      - ./wiki/database:/var/www/data/:rw
+      - ./wiki/images:/var/www/html/images/:rw
+    ports:
+      - 3003:80
