@@ -377,7 +377,7 @@ export function mainKeyBoardMenu(lang?: string): InlineKeyboardButton[][] {
 }
 
 async function enumUnclosedInvitations(user: User, lang: string): Promise<string> {
-    const unclosedInvs = user.json?.assignedorgs?.filter(inv => !inv.closed);
+    const unclosedInvs = user?.json?.assignedorgs?.filter(inv => !inv.closed);
     const orgs: (string|undefined)[] = [];
     if (unclosedInvs && unclosedInvs.length) {
         for (const inv of unclosedInvs) {
@@ -423,6 +423,10 @@ async function callback_process(tgData: TelegramBot.Update, bot: TelegramBot, us
     console.log(`Callback command '${callback}'`);
     // waiting command with : separator, f.e. accept_assign:userid
     // or without :, f.e. settings
+    if (user === undefined) {
+        bot.sendMessage(chat_id, "Pls register first");
+        return true;
+    }
     const cbcommand = callback.split(':');
     switch(cbcommand[0]) {
         case 'settings':
