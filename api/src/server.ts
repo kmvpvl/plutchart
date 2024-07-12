@@ -116,7 +116,7 @@ app.use(async (req: Request, res: Response) => {
     //it was debug log 
     //console.log(`all_headers = ${JSON.stringify(req.headers)}`);
     
-    const user = await User.getUserByTgUserId(parseInt(stguid as string));
+    const user = stguid === undefined?undefined:await User.getUserByTgUserId(parseInt(stguid as string));
 
     try {
         return await api.handleRequest({
