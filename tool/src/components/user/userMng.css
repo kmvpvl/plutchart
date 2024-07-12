@@ -1,0 +1,169 @@
+.user-mng-container {
+    grid-area: app-content;
+    border: 1px solid var(--text-color);
+    padding: 1em 0.5em 0.5em 0.5em;
+    border-radius: 0.5em;
+    position: relative;
+    --margin-top: 1em;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    min-height: 100%;
+    max-height: 100%;
+    height: 100%;
+}
+.user-mng-label {
+    position: absolute;
+    top: -0.5em;
+    left: 0.5em;
+    background-color: var(--background-color);
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+.user-mng-toolbar {
+    gap: 2px;
+}
+.user-mng-area {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 5px;
+    min-height: 100%;
+    max-height: 100%;
+    height: 100%;
+    padding: 5px;
+}
+
+.user-mng-users {
+    display: flex;
+    flex-flow: column;
+    justify-content: flex-start;
+    overflow: auto;
+    justify-items: left;
+    flex-wrap: nowrap;
+    height: 100%;
+    min-height: 100%;
+    padding-right: 5px;
+    border-right: 1px solid var(--text-color);
+    height: 100%;
+    gap:5px;
+}
+
+.user-mng-user-info {
+    display: block;
+    min-height: 100%;
+    height: 100%;
+    overflow: auto;
+}
+
+.user-mng-user-info-table {
+    display: grid;
+    grid-template-columns: auto auto;
+    width: fit-content;
+    border-right: 1px solid var(--text-color);
+    border-bottom: 1px solid var(--text-color);
+}
+
+.user-mng-user-info-table-header {
+    color: var(--background-color);
+    background-color: var(--text-color);
+    text-align: center;
+    font-weight: bold;
+    font-size: 120%;
+    padding: 2px;
+    border-left: 1px solid var(--background-color);
+}
+.user-mng-user-info-table-cell {
+    border-left: 1px solid var(--text-color);
+    border-top: 1px solid var(--text-color);
+    padding: 2px;
+}
+
+.user-mng-invited-user-container {
+    display: grid;
+    grid-template-rows: auto auto auto;
+    border: 1px solid var(--text-color);
+    border-radius: 5px;
+    padding: 2px;
+    cursor: pointer;
+}
+
+.pending::before {
+    content: "⌛";
+}
+
+.pending {
+    border-color: darkgoldenrod;
+}
+.accepted::before {
+    content: "✅";
+}
+
+.accepted {
+    border-color: darkgreen;
+}
+.declined::before {
+    content: "💔";
+}
+.declined {
+    border-color: darkred;
+}
+
+.user-mng-user-assessments-thumbs {
+    display: flex;
+    flex-flow: wrap;
+    gap: 5px;
+}
+
+.user-mng-user-assessments-thumb{
+    border: 1px solid var(--text-color);
+    border-radius: 5px;
+    padding: 2px;
+    display: grid;
+    grid-template-areas:    "flower thumb label"
+                            "flower thumb user-eval"
+                            "flower thumb others-eval";
+    grid-template-columns: 30px auto auto;
+    grid-template-rows: 1em 1em 1em;
+    min-height: 60px;
+    max-height: 120px;
+    overflow: hidden;
+    width: fit-content;
+    gap: 5px;
+    position: relative;
+}
+
+.user-mng-user-assessments-thumb-flower {
+    grid-area: flower;
+    position: absolute;
+    top: 50%;
+}
+.user-mng-user-assessments-thumb-label {
+    grid-area: label;
+    width: fit-content;
+    font-size: large;
+    font-weight: bold;
+}
+
+.user-mng-user-assessments-thumb-user {
+    grid-area: user-eval;
+    width: fit-content;
+}
+
+.user-mng-user-assessments-thumb-others {
+    grid-area: others-eval;
+    width: fit-content;
+}
+
+.user-mng-user-assessments-thumb-img-fit{
+    max-height: 100%;
+    min-height: 100%;
+    text-align: center;
+    grid-area: thumb;
+    width: 100px;
+}
+
+.user-mng-user-assessments-thumb-img-fit > img {
+    max-width: 100%;
+    max-height: 100%;
+    border: 1px solid var(--text-color);
+    border-style: inset;
+}
