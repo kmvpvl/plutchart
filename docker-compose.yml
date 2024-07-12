@@ -19,6 +19,9 @@ services:
   api:
     image: api:1
     container_name: api
+    restart: always
+    depends_on: 
+      - mongo
     env_file:
       - path: ./api/.env
         required: true
@@ -28,7 +31,14 @@ services:
       - PORT=8000
     ports:
       - 8000:8000
-
+  
+  mongo:
+    image: mongo:6
+    container_name: mongo
+    restart: always
+    volumes:
+      - ./mongo/database:/data/db/:rw
+  
   landing:
     image: landing:1
     container_name: landing
