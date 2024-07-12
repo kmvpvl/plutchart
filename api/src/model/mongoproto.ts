@@ -46,12 +46,10 @@ export default class MongoProto<T> {
     public static async connectMongo(){
         let uri = process.env.mongouri as string;
         mongoose.set('strictQuery', false);
-        try {
-            const mongo = await connect(uri);
-            console.log(`${colours.fg.green}Connected to mongo successfully${colours.reset}`);
-        } catch (err: any) {
+        connect(uri)
+        .catch(err=> {
             throw new MongoError("mongo:connect", `err=${JSON.stringify(err)}; uri="${uri}"`)
-        }
+        });
     }
     get json() { 
         return this.data;
