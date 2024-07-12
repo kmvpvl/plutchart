@@ -1,2 +1,1 @@
-FROM mediawiki:stable-fpm-alpine
-
+FROM mediawiki

@@ -16,5 +16,9 @@ $wgGrammarForms['pl']['MS.lm'][$wgSitename] = "Encyklopediach";
 $wgGrammarForms['pl']['W.lm'][$wgSitename] = "Encyklopedie";
 */
 $wgMetaNamespace = "PLUTCHART_WIKI";
-
+$wgScriptPath = "";
+$wgServer = "http://wiki.plutchart.com";
+$wgScript = "index.php";
+$wgArticlePath = "/wiki/$1";
+$wgUsePathInfo = false;
 ?>
