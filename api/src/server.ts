@@ -115,7 +115,7 @@ app.use(async (req: Request, res: Response) => {
     console.log(`🔥 tguid='${stguid}'; authcode='${sauthcode}'; sessiontoken='${ssessiontoken}'`);
     //it was debug log 
     //console.log(`all_headers = ${JSON.stringify(req.headers)}`);
-    
+    return res.status(200).json();
     const user = stguid === undefined?undefined:await User.getUserByTgUserId(parseInt(stguid as string));
 
     try {
