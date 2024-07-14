@@ -42,6 +42,7 @@ const api = new OpenAPIBackend({
 api.init();
 api.register({
     version: version,
+    tgsetting: async (c, req, res, user)=>setupTelegramBot(bot),
     tggetsessiontoken: async (c, req, res, user) => tggetsessiontoken(c, req, res, user),
     createorganization: async (c, req, res, user) => createorganization(c, req, res, user),
     renameorganization: async (c, req, res, user) => renameorganization(c, req, res, user),
@@ -113,9 +114,6 @@ app.use(async (req: Request, res: Response) => {
     const sauthcode = req.headers["plutchik-authcode"];
     const ssessiontoken = req.headers["plutchik-sessiontoken"];
     console.log(`🔥 tguid='${stguid}'; authcode='${sauthcode}'; sessiontoken='${ssessiontoken}'`);
-    //it was debug log 
-    //console.log(`all_headers = ${JSON.stringify(req.headers)}`);
-    return res.status(200).json();
     const user = stguid === undefined?undefined:await User.getUserByTgUserId(parseInt(stguid as string));
 
     try {
@@ -131,10 +129,6 @@ app.use(async (req: Request, res: Response) => {
         return res.status(500).json({code: "Wrong parameters", description: `Request ${req.url}- ${(e as Error).message}`});
     }
 });
-
-setTimeout(async ()=>{
-    setupTelegramBot(bot);
-}, 2000);
 
 export const server = app.listen(PORT, () => {
     console.log("Server is running on port", PORT);

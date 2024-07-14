@@ -223,6 +223,14 @@ paths:
                 api: 1.0.0
                 data: 1.0.0
                 ai: 0.0.1
+  /tgsetting:
+    get:
+      description: Set webhook, names, descriptions, buttons and commands to bot
+      operationId: tgsetting
+      security: []
+      responses:
+        '200':
+          description: OK
   /tgcreateauthcode:
     post:
       description: Send to user auth code
