@@ -377,8 +377,7 @@ export function mainKeyBoardMenu(lang?: string): InlineKeyboardButton[][] {
 }
 
 async function enumUnclosedInvitations(user: User, lang: string): Promise<string> {
-    return "";
-    /*const unclosedInvs = user?.json?.assignedorgs?.filter(inv => !inv.closed);
+    const unclosedInvs = user?.json?.assignedorgs?.filter(inv => !inv.closed);
     const orgs: (string|undefined)[] = [];
     if (unclosedInvs && unclosedInvs.length) {
         for (const inv of unclosedInvs) {
@@ -388,7 +387,7 @@ async function enumUnclosedInvitations(user: User, lang: string): Promise<string
         }
     }
     const ret = `${ML("Count of the invitations you accepted", lang)}: ${user.json?.assignedorgs?.length}\n${unclosedInvs?.length ? `${ML("You have unclosed tasks", lang)}:\n${orgs.map(str=>str)}` : `${ML("You closed all assignments", lang)}`}`;
-    return ret;*/
+    return ret;
 }
 
 export default async function telegram(c: any, req: Request, res: Response, bot: TelegramBot) {    
