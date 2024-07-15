@@ -42,7 +42,7 @@ const api = new OpenAPIBackend({
 api.init();
 api.register({
     version: version,
-    tgsetting: async (c, req, res, user)=>setupTelegramBot(bot),
+    tgsetting: async (c, req, res, user)=>res.status(200).json(await setupTelegramBot(bot)),
     tggetsessiontoken: async (c, req, res, user) => tggetsessiontoken(c, req, res, user),
     createorganization: async (c, req, res, user) => createorganization(c, req, res, user),
     renameorganization: async (c, req, res, user) => renameorganization(c, req, res, user),
