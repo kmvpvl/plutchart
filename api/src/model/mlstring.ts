@@ -386,6 +386,38 @@ const plutchik_strings = new Map([
     ,   [`uk`, `Ось ваш код авторизації для входу в інструмент Plutchart для дослідників`]
     ,   [`ru`, `Вот ваш код авторизации для входа в инструмент Plutchart для исследователей`]
         ])    
+    ], [`Take my name from Telegram`,
+        new Map([
+        [`de`, `Nimm meinen Namen aus Telegram`]
+    ,   [`fr`, `Prends mon nom de Telegram`]
+    ,   [`es`, `Saca mi nombre de Telegram`]
+    ,   [`uk`, `Візьми моє ім'я з Telegram`]
+    ,   [`ru`, `Возьмите мое имя из Telegram`]
+        ])    
+    ], [`I'll type my name`,
+        new Map([
+        [`de`, `Ich werde meinen Namen eingeben`]
+    ,   [`fr`, `je vais taper mon nom`]
+    ,   [`es`, `escribiré mi nombre`]
+    ,   [`uk`, `Я напишу своє ім'я`]
+    ,   [`ru`, `Я напишу свое имя`]
+        ])    
+    ], [`Hide my name`,
+        new Map([
+        [`de`, `Versteck meinen Namen`]
+    ,   [`fr`, `Cacher mon nom`]
+    ,   [`es`, `Ocultar mi nombre`]
+    ,   [`uk`, `приховати моє ім'я`]
+    ,   [`ru`, `Скрыть мое имя`]
+        ])    
+    ], [`Language was changed`,
+        new Map([
+        [`de`, `Sprache geändert`]
+    ,   [`fr`, `La langue a été modifiée`]
+    ,   [`es`, `Idioma cambiado`]
+    ,   [`uk`, `Мова змінена`]
+    ,   [`ru`, `Язык изменен`]
+        ])    
     ]
 ]);
 
