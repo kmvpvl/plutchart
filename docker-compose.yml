@@ -7,6 +7,7 @@ services:
       - "443:443"
     restart: always
     volumes:
+      - ./landing/public/:/var/www/landing/:ro
       - ./certbot/www/:/var/www/certbot/:ro
       - ./certbot/conf/:/etc/nginx/ssl/:ro
   #certbot:
@@ -19,33 +20,38 @@ services:
   api:
     image: api:1
     container_name: api
+    restart: always
+    depends_on: 
+      - mongo
+    env_file:
+      - path: ./api/.env
+        required: true
+      - path: ./api/.env.development.local
+        required: false
     environment:
       - PORT=8000
-    ports:
-      - 8000:8000
+  
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    restart: always
+    volumes:
+      - mongo-volume:/data/db/:rw
 
   landing:
     image: landing:1
     container_name: landing
     environment:
       - PORT=3001
-    ports:
-      - 3001:3001
 
   tool:
     image: tool:1
     container_name: tool
     environment:
       - PORT=3002
-    ports:
-      - 3002:3002
 
-  wiki:
-    image: wiki:1
-    container_name: wiki
-    volumes:
-      - ./wiki/LocalSettings.php:/var/www/html/LocalSettings.php
-      - ./wiki/database:/var/www/data/:rw
-      - ./wiki/images:/var/www/html/images/:rw
-    ports:
-      - 3003:80
+volumes:
+  mongo-volume:
+    name: mongo-volume
+    external: true
+
