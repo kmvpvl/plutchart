@@ -61,21 +61,16 @@ export default class Login extends React.Component<LoginProps, LoginState> {
                 <br/><br/>
                 <span className="login-button" onClick={evnt=>window.open(`https://t.me/${process.env.REACT_APP_PLUTCHART_BOT_USER_NAME}/?start=${process.env.REACT_APP_PLUTCHART_BOT_START_COMMAND}`, '_blank')}>{strSignUp.toString()}</span>
             </span>
-            {this.state.lang_choosing?<span className="login-language choosing" onMouseLeave={()=>this.setState({})}>
-            <span onClick={()=>this.callOnLanguageChanged('en')}>🇬🇧</span>
-            <span onClick={()=>this.callOnLanguageChanged('fr')}>🇫🇷</span>
-            <span onClick={()=>this.callOnLanguageChanged('de')}>🇩🇪</span>
-            <span onClick={()=>this.callOnLanguageChanged('es')}>🇪🇸</span>
-            <span onClick={()=>this.callOnLanguageChanged('uk')}>🇺🇦</span>
-            <span onClick={()=>this.callOnLanguageChanged('ru')}>🇷🇺</span>
-            </span>:<></>}
-            <span className="login-language" onClick={()=>{
-                this.setState({
-                    language: this.state.language,
-                    lang_choosing: true
-                    });
-                }}>{this.state.lang_choosing?"":this.getLangEmoji()}
-            </span>
+            <select className="login-language" defaultValue={this.state.language.split('-')[0]} onChange={event=>{
+                this.callOnLanguageChanged(event.currentTarget.value)
+            }}>
+                    <option value="en">🇬🇧</option>
+                    <option value="fr">🇫🇷</option>
+                    <option value="de">🇩🇪</option>
+                    <option value="es">🇪🇸</option>
+                    <option value="uk">🇺🇦</option>
+                    <option value="ru">🇷🇺</option>
+            </select>
         </span>
     }
 }

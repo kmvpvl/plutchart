@@ -24,14 +24,3 @@
     cursor: pointer;
     font-size: x-large;
 }
-
-.choosing {
-    background-color: white;
-    border: 1px solid gray;
-    font-size: x-large;
-    border-radius: 5px;
-    box-shadow: 2px 2px 2px gray;
-    position: absolute;
-    display: flex;
-    gap: 10px;
-}
