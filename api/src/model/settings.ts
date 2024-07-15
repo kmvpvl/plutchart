@@ -68,8 +68,10 @@ export async function setupTelegramBot(bot: TelegramBot): Promise<any> {
         res.setMyShortDescriptionSuccess = [];
         for (const [i, lang] of Object.entries(langs)) {
             try {
-                ret = await bot.setMyCommands([{command: "start", description: lang===undefined?"Register me":ML("Register me", lang)},
+                ret = await bot.setMyCommands([
+                    {command: "start", description: lang===undefined?"Register me":ML("Register me", lang)},
                     {command: "home", description: lang===undefined?"Main menu":ML("Main menu", lang)}, 
+                    {command: "settings", description: lang===undefined?"My settings":ML("My settings", lang)}, 
                     {command: "help", description: lang===undefined?"I have an issue, pls help me": ML("I have an issue, pls help me", lang)}], {language_code: lang});
                 res.setMyCommandsSuccess.push([lang, ret]);
                 console.log(`${colours.fg.green}Setting TG setMyCommand successful for lang(${lang}) = '${JSON.stringify(ret)}'${colours.reset}`);
