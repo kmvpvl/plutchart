@@ -1,3 +1,4 @@
-# https://www.robotstxt.org/robotstxt.html
+# https://www.plutchart.com/robotstxt.html
 User-agent: *
 Disallow:
+Sitemap: https://www.plutchart.com/sitemap.xml
