@@ -5,7 +5,7 @@ function health(r) {
             "version": "1.0.0"
         }
     };
-    r.setReturnValue(ret);
+    r.return(200, JSON.stringify(ret));
   }
   
   export default {health}
