@@ -22,16 +22,10 @@
     position: relative;
     margin: auto;
     cursor: pointer;
-    font-size: x-large;
+    --font-size: large;
+    border: 1px solid var(--anticipation-color);
+    border-radius: 5px;
+    background-color: white;
+    padding: 5px;
 }
 
-.choosing {
-    background-color: white;
-    border: 1px solid gray;
-    font-size: x-large;
-    border-radius: 5px;
-    box-shadow: 2px 2px 2px gray;
-    position: absolute;
-    display: flex;
-    gap: 10px;
-}
