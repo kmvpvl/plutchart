@@ -6,10 +6,16 @@
 .logo-center {
 }
 .logo-letters-container {
-    font-size: 45px;
+    font-size: 30px;
     color: var(--anticipation-color);
     display: block;
     min-width: fit-content;
     white-space: nowrap;
     text-align: center;
+}
+
+@media (min-width: 800px) {
+    .logo-letters-container {
+        font-size: 45px;
+    }
 }
