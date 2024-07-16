@@ -22,5 +22,10 @@
     position: relative;
     margin: auto;
     cursor: pointer;
-    font-size: x-large;
+    --font-size: large;
+    border: 1px solid var(--anticipation-color);
+    border-radius: 5px;
+    background-color: white;
+    padding: 5px;
 }
+

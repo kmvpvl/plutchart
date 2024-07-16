@@ -56,11 +56,7 @@ export default class Login extends React.Component<LoginProps, LoginState> {
     }
     render(): ReactNode {
         return <span className="login-container">
-            <span>
-                <span className="login-button" onClick={evnt=>window.open(`https://t.me/${process.env.REACT_APP_PLUTCHART_BOT_USER_NAME}/`, '_blank')}>{strSignIn.toString()}</span>
-                <br/><br/>
-                <span className="login-button" onClick={evnt=>window.open(`https://t.me/${process.env.REACT_APP_PLUTCHART_BOT_USER_NAME}/?start=${process.env.REACT_APP_PLUTCHART_BOT_START_COMMAND}`, '_blank')}>{strSignUp.toString()}</span>
-            </span>
+            <span className="login-button" onClick={evnt=>window.open(`https://t.me/${process.env.REACT_APP_PLUTCHART_BOT_USER_NAME}/?start=${process.env.REACT_APP_PLUTCHART_BOT_START_COMMAND}`, '_blank')}>{strSignIn.toString()}</span>
             <select className="login-language" defaultValue={this.state.language.split('-')[0]} onChange={event=>{
                 this.callOnLanguageChanged(event.currentTarget.value)
             }}>
