@@ -1,10 +1,11 @@
 function health(r) {
-    r.return(200, {
+    let ret = {
         "overal_status": "OK",
         "api": {
             "version": "1.0.0"
         }
-    });
+    };
+    r.setReturnValue(ret);
   }
   
-  export default {hello}
+  export default {health}
