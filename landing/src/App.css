@@ -3,15 +3,17 @@
   --border: 1px solid var(--trust-color);
   --padding: 1px;
   border-radius: 5px;
-  min-width: 100%;
+  min-width: 100px;
   min-height: 100%;
-  max-width: 100%;
+  max-width: 1200px;
   width: 100%;
   height: 100%;
   overflow-y: auto;
 }
 @media (orientation: landscape) {
   .app-container {
+    margin-left: auto;
+    margin-right: auto;
     grid-template-columns: repeat(9, 11.1%);
     grid-template-areas: 
       "logo logo logo banner banner banner banner login login"
