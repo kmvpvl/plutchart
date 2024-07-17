@@ -3,7 +3,7 @@
   --border: 1px solid var(--trust-color);
   --padding: 1px;
   border-radius: 5px;
-  min-width: 100px;
+  min-width: min-content;
   min-height: 100%;
   max-width: 1200px;
   width: 100%;
