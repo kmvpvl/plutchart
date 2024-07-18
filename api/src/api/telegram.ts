@@ -662,8 +662,18 @@ async function command_process(tgData: TelegramBot.Update, bot: TelegramBot, use
                     }
                 }
             break;
-
-            case '/help':
+/*             case '/user':
+                const comand_line_arr = tgData.message?.text?.split(' ');
+                if (user?.json?.support_staff) {
+                    if (comand_line_arr && comand_line_arr[1] !== undefined) {
+                        const user_about = await User.getUserByTgUserId(Number(comand_line_arr[1]));
+                        bot.sendMessage(chat_id, JSON.stringify(await user_about?.userStats()));
+                    } else {
+                        bot.sendMessage(chat_id, `TG ID is empty`);
+                    }
+                }
+                break;
+ */            case '/help':
                 if (process.env.help_support_staff !== undefined) {
                     bot.sendMessage(chat_id as number, `${ML(`If you have problems using the bot, then simply write a message to the bot. See details here`, lang)} (${process.env.landing_url})`);
                 }

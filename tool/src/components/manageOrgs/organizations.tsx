@@ -11,6 +11,7 @@ interface IOrgsProps {
     onCreateNewOrg?: ( org: any)=>void,
     onOrgSelected:(orgid: string)=>void,
     onModeChanged: (newmode: AppMode)=>void,
+    isSupportStaff: boolean;
     orgs: any[];
     currentOrg?: string;
     mode: AppMode;
@@ -118,6 +119,7 @@ export default class Organizations extends React.Component<IOrgsProps, IOrgsStat
                 <button className={this.props.mode === "content"?"selected":""} onClick={e=>this.props.onModeChanged("content")}>Edit content</button>
                 <button className={this.props.mode === "users"?"selected":""} onClick={e=>this.props.onModeChanged("users")}>Manage users</button>
                 <button className={this.props.mode === "stats"?"selected":""} onClick={e=>this.props.onModeChanged("stats")}>View stats</button>
+                {this.props.isSupportStaff?<button className={this.props.mode === "support"?"selected":""} onClick={e=>this.props.onModeChanged("support")}>Support</button>:<></>}
                 </>:<>
                 {this.state.mode === "edit set name"?
                 <>{/*here buttons in rename org mode*/}

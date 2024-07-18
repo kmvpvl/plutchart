@@ -9,8 +9,9 @@ import Organizations from './components/manageOrgs/organizations';
 import { Content } from './components/content/content';
 import UserMng from './components/user/userMng';
 import Stats from './components/stats/stats';
+import Support from './components/support/support';
 
-export type AppMode = "content" | "edit set name" | "users" | "stats";
+export type AppMode = "content" | "edit set name" | "users" | "stats" | "support";
 
 interface IAppState {
     logged: boolean;
@@ -175,7 +176,7 @@ export default class App extends React.Component <{}, IAppState> {
             
             {this.state.logged?<User userInfo={this.state.userInfo} serverInfo={this.state.serverInfo} onLogoutClick={()=>this.loginRef.current?.logout()}></User>:<div/>}
             
-            {this.state.logged?<Organizations mode={this.state.mode?this.state.mode:"content"} onSuccess={res=>this.displayInfo(res)} serverInfo={this.state.serverInfo} onOrgSelected={this.onOrgSelected.bind(this)} onError={err=>this.displayError(err)} onModeChanged={this.onModeChanged.bind(this)} currentOrg={this.state.currentOrg} onCreateNewOrg={this.onNewOrgCreated.bind(this)} orgs={this.state.orgs}></Organizations>:<div/>}
+            {this.state.logged?<Organizations mode={this.state.mode?this.state.mode:"content"} onSuccess={res=>this.displayInfo(res)} serverInfo={this.state.serverInfo} onOrgSelected={this.onOrgSelected.bind(this)} onError={err=>this.displayError(err)} onModeChanged={this.onModeChanged.bind(this)} currentOrg={this.state.currentOrg} onCreateNewOrg={this.onNewOrgCreated.bind(this)} orgs={this.state.orgs} isSupportStaff={this.state.userInfo.support_staff}></Organizations>:<div/>}
             
             {this.state.logged?
             /** users mode */
@@ -186,6 +187,10 @@ export default class App extends React.Component <{}, IAppState> {
             /** stats mode */
             :this.state.mode === "stats"?this.state.currentOrg === undefined?<></>:
             <Stats stats={this.state.currentOrgStats}/>
+
+            /** stats mode */
+            :this.state.mode === "support"?this.state.currentOrg === undefined?<></>:
+            <Support serverInfo={this.state.serverInfo}/>
 
             /** content mode */
             :this.state.currentOrg === undefined?<></>:
