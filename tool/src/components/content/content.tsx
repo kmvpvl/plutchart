@@ -36,6 +36,7 @@ export interface IContentState {
 export class Content extends React.Component<IContentProps, IContentState> {
     itemFormRef: RefObject<ItemForm> = React.createRef();
     imgCheckerRef: RefObject<HTMLImageElement> = React.createRef();
+    itemsRef: RefObject<HTMLSpanElement> = React.createRef();
     queueCheck: any[] = [];
     state: IContentState = {
         items: [],
@@ -61,6 +62,9 @@ export class Content extends React.Component<IContentProps, IContentState> {
             nState.curItem = selectItem;
             nState.mode = "content";
             this.setState(nState);
+            if (nState.curItem !== undefined) {
+                this.itemsRef.current?.scrollTo({top: 0})
+            }
         }, err=>{
             this.props.pending?.current?.decUse();
             if (this.props.onError) this.props.onError(err);
@@ -69,8 +73,13 @@ export class Content extends React.Component<IContentProps, IContentState> {
             }
         })
     }
-    saveItem() {
+    saveItem(duplicate: boolean = false) {
         const item = this.itemFormRef.current?.state.value;
+        if (duplicate) {
+            delete item._id;
+            delete item.created;
+            delete item.changed;
+        }
         this.props.pending?.current?.incUse();
         serverCommand('addcontent', this.props.serverInfo, JSON.stringify({
             contentinfo: item
@@ -81,7 +90,7 @@ export class Content extends React.Component<IContentProps, IContentState> {
                 isChanged: false
             });
             if (this.props.onSuccess) this.props.onSuccess(`Saved successfully!`);//\n${JSON.stringify(res)}`);
-            this.loadContentItems(item);
+            this.loadContentItems(res);
         }, err=>{
             this.props.pending?.current?.decUse();
             if (this.props.onError) this.props.onError(err);
@@ -178,7 +187,8 @@ export class Content extends React.Component<IContentProps, IContentState> {
                 <button onClick={e=>this.loadContentItems()}>Refresh</button>
                 <span>|</span>
                 <button onClick={this.onNewItem.bind(this)}>New item</button>
-                <button onClick={this.saveItem.bind(this)}>Save item</button>
+                <button onClick={this.saveItem.bind(this, false)}>Save item</button>
+                {this.state.curItem!==undefined?<button onClick={this.saveItem.bind(this, true)}>Duplicate item</button>:<></>}
                 {/*<button onClick={this.onBlockItem.bind(this)}>Hide item</button>*/}
                 {/*<button onClick={this.onRevertItem.bind(this)}>Revert item</button>*/}
                 <span>|</span>
@@ -187,7 +197,7 @@ export class Content extends React.Component<IContentProps, IContentState> {
                 {this.state.curItemStat?<span>Assessments: {this.state.curItemStat.count}<Flower width="60px" vector={this.state.curItemStat}/></span>:<></>}
             </span>
             <span className="content-area">
-                <span className="content-items">
+                <span className="content-items" ref={this.itemsRef}>
                     {items.length === 0?"No items in this set. Create one":items.map((v, i)=>{
                         const checkFound = this.state.checkResults.filter(cr=>v._id === cr._id);
                         const checkRes = checkFound.length === 1? checkFound[0].result:undefined; 
