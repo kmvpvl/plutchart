@@ -13,7 +13,7 @@
     "author": "Pavel Komov",
     "license": "ISC",
     "publishConfig": {
-        "access": "restricted"
+        "access": "public"
     },
     "peerDependencies": {
         "react": "^18.3.1",
