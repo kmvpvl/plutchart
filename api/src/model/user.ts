@@ -12,6 +12,19 @@ import { Md5 } from "ts-md5";
 
 export type RoleType = "supervisor"|"administrator"|"manage_users"|"manage_content"|"getting_match"|"assessment_request";
 
+export interface IUserStats {
+    orgs: Array<IOrganization>;
+    sutableTime?: Date;
+    assessments: {
+        count: number;
+        last_created?: Date;
+    }
+    content: {
+        count: number;
+        last_created?: Date;
+    }
+}
+
 export interface IAssignGroup {
     _id: Types.ObjectId;
     userid: Types.ObjectId;
@@ -55,6 +68,7 @@ export interface IUser {
     changed?: Date;
     awaitcommanddata?: string;
     ips?: Array<string>;
+    support_staff?: boolean;
     history?: Array<any>;
 }
 
@@ -453,7 +467,15 @@ export default class User extends MongoProto<IUser> {
         const ou = await mongoUsers.aggregate([{
             '$match': {'tguserid': tg_user_id,'blocked': false}
         }]);
-        if (ou.length) return new User(undefined, ou[0]);
+        if (ou.length === 1) {
+            const ret = ou[0];
+            // checking is user from support staff list?
+            if (process.env.help_support_staff !== undefined) {
+                const support_staff_arr = process.env.help_support_staff.split(',');
+                ret.support_staff = support_staff_arr.filter(v=>v === ret.tguserid.toString()).length === 1;
+            } 
+            return new User(undefined, ret);
+        }
     }
 
     async getOrganizationsUserAttachedTo(): Promise<Array<IOrganization>> {
@@ -578,5 +600,35 @@ export default class User extends MongoProto<IUser> {
         d.setUTCHours(u[0].hour);
         if (d < new Date()) d = new Date(d.getTime() + 24*60*60*1000);
         return d;
+    }
+
+    async userStats(): Promise<IUserStats> {
+        const orgs = await this.getOrganizationsUserAttachedTo();
+        const org_ids_arr = orgs.map(org=>org._id);
+        const assessments = await mongoAssessments.aggregate([
+            {$match: {uid: this.uid}
+            }, {"$group": {"_id": "$_id", "count": {"$count": {}}, "last_created": {"$max": "$created"}}
+        }]);
+
+        const content = await mongoContent.aggregate([
+            {$match: {organizationid: {$in: org_ids_arr}}
+            }, {'$group': {'_id': new Types.ObjectId(),
+                'count': {'$count': {}}, 
+                'last_created': {'$max': '$changed'}}
+            }
+        ]);
+        const ret: IUserStats = {
+            orgs: orgs,
+            sutableTime: await this.getSutableTimeToChat(),
+            content: {
+                count: content.length === 1?content[0].count:0,
+                last_created: content.length === 1?content[0].last_created:undefined,
+            },
+            assessments: {
+                count: assessments.length === 1? assessments[0].count:0,
+                last_created: assessments.length === 1? assessments[0].last_created: undefined
+            }
+        };
+        return ret;
     }
 }

@@ -64,6 +64,7 @@ div.error {
 
 button.selected {
   font-weight: bolder;
+  background-color: var(--anticipation-color);
 }
 button.selected::before {
   content: "> ";

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import colours from '../model/colours';
-import User from "../model/user";
+import User, { IUserStats } from "../model/user";
 import Organization from '../model/organization';
 import TelegramBot from 'node-telegram-bot-api';
 import { Types } from 'mongoose';
@@ -41,6 +41,22 @@ export async function reviewemotionaboveothers(c: any, req: Request, res: Respon
 export async function getmatchlist(c: any, req: Request, res: Response, user: User){
     const u = await user.getMatchList();
     return res.status(200).json({matchlist: u, user: user.json});
+}
+
+export async function supportuserstats(c: any, req: Request, res: Response, user: User, bot: TelegramBot){
+    const tguserid = req.body.tguserid;
+    console.log(`${colours.fg.blue}Args: tguserid = '${tguserid}'${colours.reset}`);
+    if (!user.json?.support_staff) return res.status(403).json({ok: false, errorText: "Support staff must do this request"});
+    try {
+        const supporting_user = await User.getUserByTgUserId(Number(tguserid));
+        if (supporting_user === undefined) {
+            return res.status(404).json({ok: false, message: `User tg id = '${tguserid}' not found`});
+        }
+        return res.status(200).json(await supporting_user.userStats());
+
+    } catch (e: any) {
+        return res.status(404).json({ok: false, errorRaw: JSON.stringify(e), errorText: `Couldn't return user with Telegram ID = '${tguserid}'`});
+    }
 }
 
 export async function reminduseraboutinvitation(c: any, req: Request, res: Response, user: User, bot: TelegramBot){

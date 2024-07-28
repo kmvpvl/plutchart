@@ -509,6 +509,24 @@ paths:
       responses:
         '200':
           description: OK
+  /supportuserstats:
+    description: Reveals stats of user. User info, preffered time to text, organizations, content, assessments
+    post:
+      operationId: supportuserstats
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tguserid: 
+                  description: Telegram ID
+                  type: string
+              required:
+                - tguserid
+      responses:
+        '200':
+          description: OK        
   /telegram:
     post:
       operationId: telegram
