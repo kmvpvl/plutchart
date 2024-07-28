@@ -22,14 +22,21 @@ export class Chart extends React.Component<IChartProps, IChartState> {
     state: IChartState = {
         value: this.props.value?this.props.value:0
     }
+    capture: boolean = false;
     svgRef: React.RefObject<SVGSVGElement> = React.createRef();
     gRef: React.RefObject<SVGGElement> = React.createRef();
+    pointerRef: React.RefObject<SVGRectElement> = React.createRef();
     width?: number;
     height?: number;
     componentDidMount(): void {
         this.width = this.svgRef.current?.width.baseVal.value;
         this.height = this.svgRef.current?.height.baseVal.value;
         this.gRef.current?.addEventListener("wheel", this.onWheel.bind(this), {passive: false});
+        this.gRef.current?.addEventListener("mousemove", this.onMouseMove.bind(this), {passive: false});
+        this.pointerRef.current?.addEventListener("mousedown", this.onPointerMouseDown.bind(this), {passive: false});
+        this.gRef.current?.addEventListener("touchmove", this.onMouseMove.bind(this), {passive: false});
+        this.pointerRef.current?.addEventListener("touchstart", this.onPointerMouseDown.bind(this), {passive: false});
+//        this.gRef.current?.addEventListener("touchstart", this.onPointerMouseDown.bind(this), {passive: false});
     }
     get value() {
         return this.state.value;
@@ -44,6 +51,36 @@ export class Chart extends React.Component<IChartProps, IChartState> {
         if (v !== this.value && this.props.onChange !== undefined) this.props.onChange(v);
         this.setState({value: v});
     }
+    
+    onBarClick(event: any) {
+        const rect = event.currentTarget.getBoundingClientRect();
+        const padding = 0;
+        const elH = rect.height;
+        let calcValue: number;
+        const y = (event.type==="touchmove"?event.touches[0].clientY:event.clientY) - event.currentTarget.getBoundingClientRect().top;
+        calcValue = 1 - (y - padding)/(elH - 2 * padding);
+        if (calcValue < 0) calcValue = 0;
+        if (calcValue > 1) calcValue = 1;
+        calcValue = Math.round(calcValue * 10)/10;
+        if (calcValue !== this.value && this.props.onChange !== undefined) this.props.onChange(calcValue);
+        this.setState({value: calcValue});
+    }
+
+    onPointerMouseDown (event: any) {
+        event.preventDefault();
+        this.capture = true;
+    }
+
+    onMouseLeave(event: any) {
+        if (this.capture) this.onBarClick(event);
+        this.capture = false;
+    }
+
+    onMouseMove(event: any) {
+        event.preventDefault();
+        if (this.capture) this.onBarClick(event);
+    }
+
     render(): React.ReactNode {
         let y;
         let h;
@@ -62,8 +99,26 @@ export class Chart extends React.Component<IChartProps, IChartState> {
         }
         return <svg ref={this.svgRef} xmlns='http://www.w3.org/2000/svg' xmlnsXlink='http://www.w3.org/1999/xlink' width='100%' height='10em' className='plutchik-chart-slider' onClick={()=>this.props.onClick?this.props.onClick():null} style={this.props.onClick?{cursor: "pointer"}:{}}>
             {this.props.viewmode === "chart"?<rect className="plutchik-dotted-frame" x="0.25em" y="0" width="1em" height="100%"/>:<></>}
-            <g ref={this.gRef}><rect style={{fill: `var(--plutchik-${this.props.emotion}-color)`}} x="0.25em" y={y} width="1em" height={h}/>
-            {this.props.viewmode === 'slider'?<rect style={{fill: `var(--plutchik-${this.props.emotion}-color)`, stroke: "white"}} x="0em" y={`calc(${(1 - this.state.value) * 100}% - ${1 - this.state.value}em)`} width="1.5em" height="1em" rx="0.5em"/>:<></>}
+            <g ref={this.gRef}
+                onClick={this.onBarClick.bind(this)} 
+                onMouseLeave={this.onMouseLeave.bind(this)} 
+                onMouseUp={this.onMouseLeave.bind(this)} 
+            >
+                <rect 
+                style={{fill: `var(--plutchik-${this.props.emotion}-color)`, 
+                cursor: this.props.viewmode === "chart"?"default":"pointer"}} 
+                x="0.25em" 
+                y={y} 
+                width="1em" 
+                height={h}/>
+            {this.props.viewmode === 'slider'?<rect 
+                ref={this.pointerRef} 
+                style={{fill: `var(--plutchik-${this.props.emotion}-color)`, stroke: "white", cursor: "pointer"}} 
+                x="0em" 
+                y={`calc(${(1 - this.state.value) * 100}% - ${1 - this.state.value}em)`} 
+                width="1.5em" 
+                height="1em" 
+                rx="0.5em"/>:<></>}
             </g>
             <g className='plutchik-emotion-text'><text style={{fill: `var(--plutchik-${this.props.emotion}-color)`}} x="0" y="100%">{ML(this.props.emotion, this.props.language)}</text></g>
         </svg>;
