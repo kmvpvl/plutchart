@@ -3,6 +3,7 @@ import "./support.css";
 import React from "react";
 import { IServerInfo, PlutchikError, serverCommand } from "../../model/common";
 import Pending from "../pending/pending";
+import { Charts } from "plutchik-reactjs-components";
 
 export interface ISupportProps {
     serverInfo: IServerInfo;
@@ -48,6 +49,10 @@ export default class Support extends React.Component<ISupportProps, ISupportStat
             <div><span>Assessments</span>
                 <div>Count: {this.state.userStats?.assessments.count}</div>
                 <div>Last created: {this.state.userStats?.assessments.last_created}</div>
+            </div>
+            <div>
+                <Charts vector={this.state.userStats.observeAssessments.ownVector} label="Own vector"/> 
+                <Charts vector={this.state.userStats.observeAssessments.othersVector} label="Others"/> 
             </div>
             </>:<></>}
         </div>

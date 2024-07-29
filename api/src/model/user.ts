@@ -23,6 +23,7 @@ export interface IUserStats {
         count: number;
         last_created?: Date;
     }
+    observeAssessments: IObserveAssessments;
 }
 
 export interface IAssignGroup {
@@ -607,7 +608,9 @@ export default class User extends MongoProto<IUser> {
         const org_ids_arr = orgs.map(org=>org._id);
         const assessments = await mongoAssessments.aggregate([
             {$match: {uid: this.uid}
-            }, {"$group": {"_id": "$_id", "count": {"$count": {}}, "last_created": {"$max": "$created"}}
+            }, {"$group": {"_id": new Types.ObjectId(), 
+                "count": {"$count": {}}, 
+                "last_created": {"$max": "$created"}}
         }]);
 
         const content = await mongoContent.aggregate([
@@ -617,6 +620,8 @@ export default class User extends MongoProto<IUser> {
                 'last_created': {'$max': '$changed'}}
             }
         ]);
+
+        const oas = await this.observeAssessments();
         const ret: IUserStats = {
             orgs: orgs,
             sutableTime: await this.getSutableTimeToChat(),
@@ -627,7 +632,8 @@ export default class User extends MongoProto<IUser> {
             assessments: {
                 count: assessments.length === 1? assessments[0].count:0,
                 last_created: assessments.length === 1? assessments[0].last_created: undefined
-            }
+            },
+            observeAssessments: oas
         };
         return ret;
     }

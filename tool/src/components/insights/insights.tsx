@@ -1,4 +1,5 @@
-import { Charts, EmotionType, EmotionVector } from '../emotion/emotion';
+import { Charts } from 'plutchik-reactjs-components';
+import { EmotionType, EmotionVector } from '../emotion/emotion';
 import './insights.css'
 import React, { ReactNode } from 'react';
 

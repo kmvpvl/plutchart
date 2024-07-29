@@ -106,32 +106,3 @@ export interface EmotionVector {
     anger: number;
     anticipation: number;
 }
-
-interface IChartsProps {
-    vector: EmotionVector;
-    label: string;
-    onClick?: (emotion: EmotionType)=>void;
-    gridArea?: string;
-}
-interface IChartsState {
-
-}
-
-export class Charts extends React.Component<IChartsProps, IChartsState> {
-    private onEmotionClick(emotion: EmotionType) {
-        if (this.props.onClick) this.props.onClick(emotion);
-    }
-    
-    render(): React.ReactNode {
-    return <>
-    <div className='charts-emotions' style={{gridArea: this.props.gridArea}}>
-        <div className="charts-label">{this.props.label}</div>
-        {emotions.map((v, i)=>{
-            let val: number | undefined = this.props.vector[emotions[i]];
-            val = val?val:0;
-            return <Emotion viewmode='chart' disabled={false} value={val} emotion={emotions[i]} key={i} onClick={this.props.onClick?this.onEmotionClick.bind(this, emotions[i]):undefined}/>
-        })}
-    </div>
-    </>;
-    }
-}
