@@ -6,7 +6,9 @@
     "module": "./dist/esm/index.js",
     "types": "./dist/esm/index.d.ts",
     "scripts": {
-        "full:rebuild": "npm i && npm run clear && npm run build",
+        "full:rebuild": "npm i && npm run lint && npm run clear && npm run build",
+        "prettier": "prettier --write \"{src,tests,example/src}/**/*.{js,ts,jsx,tsx,css}\"",
+        "lint": "eslint \"{**/*,*}.{js,ts,jsx,tsx}\"",
         "build:esm": "npx tsc && cp **/*.css dist/esm",
         "build:cjs": "npx tsc --module commonjs --outDir dist/cjs && cp **/*.css dist/cjs",
         "build": "npm run build:esm && npm run build:cjs",
@@ -23,6 +25,14 @@
     },
     "devDependencies": {
         "@types/react": "^18.3.3",
+        "@typescript-eslint/eslint-plugin": "^7.17.0",
+        "@typescript-eslint/parser": "^7.17.0",
+        "eslint": "^8.57.0",
+        "eslint-config-prettier": "^9.1.0",
+        "eslint-plugin-prettier": "^5.2.1",
+        "eslint-plugin-react": "^7.35.0",
+        "eslint-plugin-react-hooks": "^4.6.2",
+        "prettier": "^3.3.3",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
         "typescript": "^5.5.4"

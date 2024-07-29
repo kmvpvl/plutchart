@@ -25,11 +25,15 @@
     max-height: fit-content;
     gap: 1em;
     z-index: 101;
-    animation: flower-spin 3s cubic-bezier(.8, 0, .2, 1) infinite;
+    animation: flower-spin 3s cubic-bezier(0.8, 0, 0.2, 1) infinite;
 }
 @keyframes flower-spin {
-    50% { transform: rotate(180deg) scale(1.75);}
-    100% { transform: rotate(360deg) scale(1); }
+    50% {
+        transform: rotate(180deg) scale(1.75);
+    }
+    100% {
+        transform: rotate(360deg) scale(1);
+    }
 }
 
 .pending-squares-square {
@@ -37,11 +41,17 @@
     height: 1em;
     background-color: silver;
     transform-origin: center center;
-    animation: squares-spin 3s cubic-bezier(.8, 0, .2, 1) infinite;
+    animation: squares-spin 3s cubic-bezier(0.8, 0, 0.2, 1) infinite;
 }
 @keyframes squares-spin {
-    50% { transform: rotate(180deg) scale(1.5); background-color: gray;}
-    100% { transform: rotate(360deg) scale(1); background-color: silver;}
+    50% {
+        transform: rotate(180deg) scale(1.5);
+        background-color: gray;
+    }
+    100% {
+        transform: rotate(360deg) scale(1);
+        background-color: silver;
+    }
 }
 
 .pending-shattle-container {
@@ -62,7 +72,7 @@
 }
 
 .pending-shattle-point {
-    animation: shattle-spin 1s cubic-bezier(.8, 0, .2, 1) infinite;
+    animation: shattle-spin 1s cubic-bezier(0.8, 0, 0.2, 1) infinite;
     min-width: 0;
     min-height: 10px;
     background-color: gray;
@@ -74,8 +84,19 @@
 }
 
 @keyframes shattle-spin {
-    25% { width: 100%; }
-    50% { left: 100%; width: 0}
-    75% { left: 0; width: 100% }
-    100% {  width: 0;left: 0; }
+    25% {
+        width: 100%;
+    }
+    50% {
+        left: 100%;
+        width: 0;
+    }
+    75% {
+        left: 0;
+        width: 100%;
+    }
+    100% {
+        width: 0;
+        left: 0;
+    }
 }
