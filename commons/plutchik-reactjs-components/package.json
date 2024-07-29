@@ -1,14 +1,16 @@
 {
     "name": "plutchik-reactjs-components",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "description": "Plutchik emotional azimuth",
     "main": "./dist/cjs/index.js",
     "module": "./dist/esm/index.js",
     "types": "./dist/esm/index.d.ts",
     "scripts": {
-        "build:esm": "cp **/*.css dist/esm && npx tsc",
-        "build:cjs": "cp **/*.css dist/cjs && npx tsc --module commonjs --outDir dist/cjs",
-        "build": "npm run build:esm && npm run build:cjs"
+        "full:rebuild": "npm i && npm run clear && npm run build",
+        "build:esm": "npx tsc && cp **/*.css dist/esm",
+        "build:cjs": "npx tsc --module commonjs --outDir dist/cjs && cp **/*.css dist/cjs",
+        "build": "npm run build:esm && npm run build:cjs",
+        "clear": "rm -R dist | true"
     },
     "author": "Pavel Komov",
     "license": "ISC",
