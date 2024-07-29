@@ -3,13 +3,13 @@ import './App.css';
 import TGLogin, {LoginFormStates } from './components/loginForm/loginForm';
 import './model/common';
 import { IServerInfo, PlutchikError, serverCommand } from './model/common';
-import Pending from './components/pending/pending';
 import User from './components/user/user';
 import Organizations from './components/manageOrgs/organizations';
 import { Content } from './components/content/content';
 import UserMng from './components/user/userMng';
 import Stats from './components/stats/stats';
 import Support from './components/support/support';
+import { Pending } from 'plutchik-reactjs-components';
 
 export type AppMode = "content" | "edit set name" | "users" | "stats" | "support";
 

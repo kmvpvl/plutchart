@@ -3,9 +3,9 @@ import './userMng.css';
 import React from 'react';
 import { IServerInfo, PlutchikError, relativeDateString, serverCommand } from '../../model/common';
 import Insights from '../insights/insights';
-import Pending from '../pending/pending';
 import { EmotionType, Flower } from '../emotion/emotion';
 import MLString from '../../model/mlstring';
+import { Pending } from 'plutchik-reactjs-components';
 export interface  IUserMngProps {
     serverInfo: IServerInfo;
     org: any;

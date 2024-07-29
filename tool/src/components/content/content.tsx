@@ -2,9 +2,9 @@ import React, { RefObject } from "react";
 import { IServerInfo, PlutchikError, relativeDateString, serverCommand } from "../../model/common";
 import './content.css';
 import { Flower } from "../emotion/emotion";
-import Pending from "../pending/pending";
 import MLString from "../../model/mlstring";
 import { MLStringEditor } from "../mlstring/mlstring";
+import { Pending } from "plutchik-reactjs-components";
 
 export interface IContentProps {
     serverInfo: IServerInfo;

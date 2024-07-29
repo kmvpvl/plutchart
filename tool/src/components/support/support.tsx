@@ -2,8 +2,7 @@ import { ReactNode, RefObject } from "react";
 import "./support.css";
 import React from "react";
 import { IServerInfo, PlutchikError, serverCommand } from "../../model/common";
-import Pending from "../pending/pending";
-import { Charts } from "plutchik-reactjs-components";
+import { Charts, Pending } from "plutchik-reactjs-components";
 
 export interface ISupportProps {
     serverInfo: IServerInfo;
