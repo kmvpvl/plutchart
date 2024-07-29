@@ -607,7 +607,9 @@ export default class User extends MongoProto<IUser> {
         const org_ids_arr = orgs.map(org=>org._id);
         const assessments = await mongoAssessments.aggregate([
             {$match: {uid: this.uid}
-            }, {"$group": {"_id": "$_id", "count": {"$count": {}}, "last_created": {"$max": "$created"}}
+            }, {"$group": {"_id": new Types.ObjectId(), 
+                "count": {"$count": {}}, 
+                "last_created": {"$max": "$created"}}
         }]);
 
         const content = await mongoContent.aggregate([
