@@ -35,7 +35,6 @@ export default class App extends React.Component<IAppProps, IAppState> {
                 <Charts vector={love} label='Love' />
                 <h1>Flower component</h1>
                 <Flower width='200px' vector={this.state.curVector}></Flower>
-                <Formula vector={this.state.curVector} />
                 <h1>Charts sliders</h1>
                 <Chart
                     emotion={Emotion.joy}
@@ -63,6 +62,7 @@ export default class App extends React.Component<IAppProps, IAppState> {
                 <Chart emotion={Emotion.disgust} viewmode='slider' language='ru' />
                 <Chart emotion={Emotion.anger} viewmode='slider' />
                 <Chart emotion={Emotion.anticipation} viewmode='slider' />
+                <Formula vector={this.state.curVector} />
                 <h1>Formula component</h1>
                 <h3>Language=undefined, uppperCase=true</h3>
                 <Formula complexEmotion={ComplexEmotion.curiosity} className='formula-1' upperCase={true} />

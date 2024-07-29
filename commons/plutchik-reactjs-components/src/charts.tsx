@@ -142,7 +142,7 @@ export class Chart extends React.Component<IChartProps, IChartState> {
                             y={`calc(${(1 - this.state.value) * 100}% - ${1 - this.state.value}em)`}
                             width='1.5em'
                             height='1em'
-                            rx='0.5em'
+                            rx={this.capture ? '0.1em' : '0.5em'}
                         />
                     ) : (
                         <></>
