@@ -1,0 +1,10 @@
+:root {
+    --plutchik-joy-color: #edc500;
+    --plutchik-trust-color: #7abd0d;
+    --plutchik-fear-color: #007b33;
+    --plutchik-surprise-color: #0080ab;
+    --plutchik-sadness-color: #1f6dad;
+    --plutchik-disgust-color: #7b4ea3;
+    --plutchik-anger-color: #dc0047;
+    --plutchik-anticipation-color: #e87200;
+}

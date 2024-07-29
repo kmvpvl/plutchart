@@ -19,7 +19,7 @@
       "logo logo logo banner banner banner banner login login"
       "HRD HRD HRD psychologists psychologists psychologists everyone everyone everyone"
       "safety_manifest safety_manifest safety_manifest safety_manifest safety_manifest safety_manifest safety_manifest safety_manifest safety_manifest"
-      "theory theory theory theory theory theory theory theory theory"
+      "theory theory theory theory theory demo demo demo demo"
       "q_n_a q_n_a q_n_a q_n_a q_n_a q_n_a q_n_a q_n_a q_n_a";
       grid-template-rows: auto auto auto auto 1fr;
     }
@@ -35,6 +35,7 @@
       "everyone everyone"
       "safety_manifest safety_manifest"
       "theory theory"
+      "demo demo"
       "q_n_a q_n_a";
       grid-template-rows: auto auto auto auto auto auto auto 1fr;
     }

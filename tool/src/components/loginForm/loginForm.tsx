@@ -1,9 +1,9 @@
 import React, { RefObject } from 'react';
 import './loginForm.css';
 import { IServerInfo, PlutchikError, serverCommand, serverFetch } from '../../model/common';
-import Pending from '../pending/pending';
 import MLString from '../../model/mlstring';
 import {ML} from '../../model/mlstring';
+import { Pending } from 'plutchik-reactjs-components';
 
 const strTryAgain = new MLString({
     default: "Try again", 
