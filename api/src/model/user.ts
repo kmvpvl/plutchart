@@ -23,6 +23,7 @@ export interface IUserStats {
         count: number;
         last_created?: Date;
     }
+    observeAssessments: IObserveAssessments;
 }
 
 export interface IAssignGroup {
@@ -619,6 +620,8 @@ export default class User extends MongoProto<IUser> {
                 'last_created': {'$max': '$changed'}}
             }
         ]);
+
+        const oas = await this.observeAssessments();
         const ret: IUserStats = {
             orgs: orgs,
             sutableTime: await this.getSutableTimeToChat(),
@@ -629,7 +632,8 @@ export default class User extends MongoProto<IUser> {
             assessments: {
                 count: assessments.length === 1? assessments[0].count:0,
                 last_created: assessments.length === 1? assessments[0].last_created: undefined
-            }
+            },
+            observeAssessments: oas
         };
         return ret;
     }

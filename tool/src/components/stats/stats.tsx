@@ -4,7 +4,7 @@ import React from "react"
 import Chart from "react-google-charts";
 import Label from "./label";
 import { EmotionalVector, IEmotionalVector } from "../../model/common";
-import { Charts } from "../emotion/emotion";
+import { Charts } from "plutchik-reactjs-components";
 
 enum Tabs {
     content_creating = "Content creating",
