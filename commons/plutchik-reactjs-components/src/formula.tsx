@@ -1,36 +1,35 @@
-import React from "react";
-import { ComplexEmotion, Emotion, IEmotionVector } from "./types";
-import { ML } from "./mlstrings";
+import React from 'react'
+import { ComplexEmotion, Emotion, IEmotionVector } from './types'
+import { ML } from './mlstrings'
 
 export interface IFormulaProps {
-    language?: string;
-    complexEmotion?: ComplexEmotion;
-    className?: string;
-    upperCase?: boolean;
-    vector?: IEmotionVector;
+    language?: string
+    complexEmotion?: ComplexEmotion
+    className?: string
+    upperCase?: boolean
+    vector?: IEmotionVector
 }
 
-export interface IFormulaState {
+export interface IFormulaState {}
 
-}
-
-export default class Formula extends React.Component <IFormulaProps, IFormulaState> {
+export default class Formula extends React.Component<IFormulaProps, IFormulaState> {
     render(): React.ReactNode {
-        let str: string = "";
+        let str: string = ''
         if (this.props.complexEmotion !== undefined) {
-            const f = formulas.filter(v=>v[0] === this.props.complexEmotion)[0];
-            str = `${ML(f[0] as ComplexEmotion, this.props.language)} = ${ML(f[1][0] as Emotion, this.props.language)} + ${ML(f[1][1] as Emotion, this.props.language)}`;
+            const f = formulas.filter((v) => v[0] === this.props.complexEmotion)[0]
+            str = `${ML(f[0] as ComplexEmotion, this.props.language)} = ${ML(f[1][0] as Emotion, this.props.language)} + ${ML(f[1][1] as Emotion, this.props.language)}`
         }
         if (this.props.vector !== undefined) {
-            const nonZeros = Object.entries(this.props.vector).filter(el=>el[1] !== 0);
+            const nonZeros = Object.entries(this.props.vector).filter((el) => el[1] !== 0)
             if (nonZeros.length === 2) {
-                const emList = Array.from(nonZeros, el=>el[0]);
-                const fForm = formulas.filter(pair=>pair[1][0] === emList[0] || pair[1][1] === emList[0]);
-                const sForm = fForm.filter(pair=>pair[1][0] === emList[1] || pair[1][1] === emList[1]);
-                if (sForm.length === 1) str = `${ML(sForm[0][0] as ComplexEmotion, this.props.language)} = ${Array.from(emList, el=>ML(el, this.props.language)).join(" + ")}`;
-            } 
+                const emList = Array.from(nonZeros, (el) => el[0])
+                const fForm = formulas.filter((pair) => pair[1][0] === emList[0] || pair[1][1] === emList[0])
+                const sForm = fForm.filter((pair) => pair[1][0] === emList[1] || pair[1][1] === emList[1])
+                if (sForm.length === 1)
+                    str = `${ML(sForm[0][0] as ComplexEmotion, this.props.language)} = ${Array.from(emList, (el) => ML(el, this.props.language)).join(' + ')}`
+            }
         }
-        return <div className={this.props.className}>{this.props.upperCase?str.toUpperCase():str}</div>
+        return <div className={this.props.className}>{this.props.upperCase ? str.toUpperCase() : str}</div>
     }
 }
 
@@ -59,4 +58,4 @@ const formulas: (Emotion[] | ComplexEmotion)[][] = [
     [ComplexEmotion.optimism, [Emotion.anticipation, Emotion.joy]],
     [ComplexEmotion.hope, [Emotion.anticipation, Emotion.trust]],
     [ComplexEmotion.anxiety, [Emotion.anticipation, Emotion.fear]],
-];
+]

@@ -1,7 +1,7 @@
 import React from 'react';
 import { IServerInfo, PlutchikError, serverCommand } from '../../model/common';
 import './user.css'
-import Pending from '../pending/pending';
+import { Pending } from 'plutchik-reactjs-components';
 
 export type UserModes = "user" | "psychologist" | "user:insights" | "psychologist:chat" | "psychologist:content";
 

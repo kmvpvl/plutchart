@@ -1,8 +1,8 @@
 import React, { RefObject, createRef } from "react";
 import { IServerInfo, PlutchikError, serverCommand } from "../../model/common";
-import Pending from "../pending/pending";
 import "./organizations.css";
 import { AppMode } from "../../App";
+import { Pending } from "plutchik-reactjs-components";
 
 interface IOrgsProps {
     serverInfo: IServerInfo,

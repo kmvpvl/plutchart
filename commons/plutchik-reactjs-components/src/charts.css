@@ -3,7 +3,7 @@
     max-width: 3em;
 }
 .plutchik-dotted-frame {
-    fill:transparent;
+    fill: transparent;
     opacity: 0.5;
     stroke: var(--plutchik-text-color);
     stroke-dasharray: 1 1;

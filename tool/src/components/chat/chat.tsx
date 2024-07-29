@@ -1,8 +1,8 @@
 import React, { RefObject } from 'react';
 import './chat.css';
 import { IServerInfo, PlutchikError, serverCommand } from '../../model/common';
-import Pending from '../pending/pending';
 import UserThumb from '../user/userthumb';
+import { Pending } from 'plutchik-reactjs-components';
 
 export interface IChatProps {
     serverInfo: IServerInfo;

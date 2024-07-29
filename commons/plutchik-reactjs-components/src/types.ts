@@ -1,13 +1,13 @@
 export enum Emotion {
-    joy = "joy",
-    trust = "trust",
-    fear = "fear",
-    surprise = "surprise",
-    sadness = "sadness",
-    disgust = "disgust",
-    anger = "anger",
-    anticipation = "anticipation"
-};
+    joy = 'joy',
+    trust = 'trust',
+    fear = 'fear',
+    surprise = 'surprise',
+    sadness = 'sadness',
+    disgust = 'disgust',
+    anger = 'anger',
+    anticipation = 'anticipation',
+}
 
 export enum ComplexEmotion {
     love = 'love',
@@ -33,19 +33,19 @@ export enum ComplexEmotion {
     dominance = 'dominance',
     optimism = 'optimism',
     hope = 'hope',
-    anxiety = 'anxiety',    
+    anxiety = 'anxiety',
 }
 
-export type EmotionType = keyof typeof Emotion;
-export type ComplexEmotionType = keyof typeof ComplexEmotion;
+export type EmotionType = keyof typeof Emotion
+export type ComplexEmotionType = keyof typeof ComplexEmotion
 
 export interface IEmotionVector {
-    joy: number;
-    trust: number;
-    fear: number;
-    surprise: number;
-    sadness: number;
-    disgust: number;
-    anger: number;
-    anticipation: number;
+    joy: number
+    trust: number
+    fear: number
+    surprise: number
+    sadness: number
+    disgust: number
+    anger: number
+    anticipation: number
 }
