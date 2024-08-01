@@ -59,6 +59,22 @@ export async function supportuserstats(c: any, req: Request, res: Response, user
     }
 }
 
+export async function supportsendmessagetouser(c: any, req: Request, res: Response, user: User, bot: TelegramBot){
+    const uid = new Types.ObjectId(req.body.uid);
+    const message = req.body.message;
+    console.log(`${colours.fg.blue}Args: uid = '${uid}'; message = '${message}'${colours.reset}`);
+    if (!user.json?.support_staff) return res.status(403).json({ok: false, errorText: "Support staff must do this request"});
+    try {
+        const supporting_user = new User(uid);
+        await supporting_user.load();
+        bot.sendMessage(supporting_user.json?.tguserid as number, message, {disable_notification: true});
+        return res.status(200).json(await supporting_user.getSutableTimeToChat());
+
+    } catch (e: any) {
+        return res.status(404).json({ok: false, errorRaw: JSON.stringify(e), errorText: `Couldn't return user uid = '${uid}'`});
+    }
+}
+
 export async function reminduseraboutinvitation(c: any, req: Request, res: Response, user: User, bot: TelegramBot){
     const m = req.body.message;
     const invitationid = new Types.ObjectId(req.body.invitationid);
