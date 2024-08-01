@@ -324,7 +324,7 @@ const plutchik_strings = new Map([
 export function ML(str?: string, lang?: string): string {
     if (lang === undefined) {
         const params: string[] = window.location.search.substring(1).split('&')
-        lang = window.navigator.language
+        lang = window.navigator.language.split('-')[0]
         const lang_param = params.filter((v) => v.split('=')[0] === 'lang')
         if (lang_param !== undefined && lang_param.length > 0) lang = lang_param[0].split('=')[1]
     }
