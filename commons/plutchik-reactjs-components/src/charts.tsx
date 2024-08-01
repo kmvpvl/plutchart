@@ -45,7 +45,7 @@ export class Chart extends React.Component<IChartProps, IChartState> {
         event.preventDefault()
         if (this.props.viewmode !== 'slider') return
         let v = this.state.value
-        v = v - event.deltaY / 30
+        v = v - 0.1 * Math.sign(event.deltaY)
         if (v > 1) v = 1
         if (v < 0) v = 0
         if (v !== this.value && this.props.onChange !== undefined) this.props.onChange(v)
