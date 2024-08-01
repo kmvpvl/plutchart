@@ -13,6 +13,7 @@ import { Md5 } from "ts-md5";
 export type RoleType = "supervisor"|"administrator"|"manage_users"|"manage_content"|"getting_match"|"assessment_request";
 
 export interface IUserStats {
+    userData: IUser;
     orgs: Array<IOrganization>;
     sutableTime?: Date;
     assessments: {
@@ -623,6 +624,7 @@ export default class User extends MongoProto<IUser> {
 
         const oas = await this.observeAssessments();
         const ret: IUserStats = {
+            userData: this.json as IUser,
             orgs: orgs,
             sutableTime: await this.getSutableTimeToChat(),
             content: {

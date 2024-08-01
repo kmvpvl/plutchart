@@ -429,6 +429,26 @@ paths:
       responses:
         '200':
           description: OK
+  /supportsendmessagetouser:
+    description: Sends any message to user by Telegram in bot
+    post:
+      operationId: supportsendmessagetouser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - message
+                - uid
+              properties:
+                uid:
+                  type: string
+                message:
+                  type: string
+      responses:
+        '200':
+          description: OK
   /reminduseraboutinvitation:
     description: Informs user by Telegram, returns time when message scheduled
     post:
