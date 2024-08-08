@@ -5,6 +5,7 @@ import { Emotion, IEmotionVector } from './types'
 interface IFlowerProps {
     vector: IEmotionVector
     width: string
+    gridArea?: string
 }
 
 interface IFlowerState {}
@@ -13,7 +14,7 @@ export default class Flower extends React.Component<IFlowerProps, IFlowerState> 
     render(): React.ReactNode {
         const w = 100
         return (
-            <span className='flower-container'>
+            <span className='flower-container' style={{ gridArea: this.props.gridArea }}>
                 <svg
                     xmlns='http://www.w3.org/2000/svg'
                     xmlnsXlink='http://www.w3.org/1999/xlink'

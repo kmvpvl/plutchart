@@ -7,6 +7,8 @@ import {
     Chart,
     IEmotionVector,
     Pending,
+    Toasts,
+    ToastType,
 } from 'plutchik-reactjs-components'
 import React from 'react'
 import { ReactNode } from 'react'
@@ -18,7 +20,8 @@ interface IAppState {
 }
 
 export default class App extends React.Component<IAppProps, IAppState> {
-    pendingRef: React.RefObject<Pending> = React.createRef()
+    pendingRef: React.RefObject<Pending> = React.createRef();
+    toastesRef: React.RefObject<Toasts> = React.createRef();
     state: IAppState = {
         curVector: { joy: 0.5, trust: 0, fear: 0, surprise: 0, sadness: 0, disgust: 0, anger: 0, anticipation: 0 },
     }
@@ -93,6 +96,17 @@ export default class App extends React.Component<IAppProps, IAppState> {
                     Start Pending
                 </button>
                 <Pending ref={this.pendingRef}></Pending>
+                <h1>Toast component</h1>
+                <button onClick={()=>{
+                    //debugger
+                    this.toastesRef.current?.addToast({
+                        type: ToastType.info,
+                        message: "This is the message of toast. It's multiline there",
+                        modal: true
+                    });
+                }}>Info</button>
+                <Toasts placesCount={2} ref={this.toastesRef}/>
+
             </React.Fragment>
         )
     }
