@@ -33,6 +33,7 @@
     bottom: 0;
     margin: auto;
     width: 100%;
+    max-width: 800px;
     position: relative;
     padding: 1em 0 0 0;
 }
@@ -118,6 +119,6 @@
 
 .plutchik-toast-description {
     font-size: small;
-    height: 4em;
+    max-height: 4em;
     overflow: auto;
 }
