@@ -10,7 +10,7 @@ import checkSettings, { setupTelegramBot } from './model/settings';
 import fs from 'fs';
 import path from 'path';
 import User from './model/user';
-import userinfo, {getinsights, getmatchlist, reminduseraboutinvitation, ogranizationAttachedToUser, reviewemotionaboveothers, supportuserstats, supportsendmessagetouser} from './api/user';
+import userinfo, {getinsights, getmatchlist, reminduseraboutinvitation, ogranizationAttachedToUser, reviewemotionaboveothers, supportuserstats, supportsendmessagetouser, supportusersrating} from './api/user';
 import {createorganization, getinvitationstats, getorganizationstats, getusersassessedorganizationcontent, renameorganization, requesttoassignorgtouser} from './api/organization';
 import { Md5 } from 'ts-md5';
 import { Types } from 'mongoose';
@@ -62,6 +62,7 @@ api.register({
     requesttoassignorgtouser: async (c, req, res, user) => requesttoassignorgtouser(c, req, res, user, bot),
     getinvitationstats: async (c, req, res, user) => getinvitationstats(c, req, res, user, bot),
     getorganizationstats: async (c, req, res, user) => getorganizationstats(c, req, res, user),
+    supportusersrating: async (c, req, res, user) => supportusersrating(c, req, res, user, bot),
     supportuserstats: async (c, req, res, user) => supportuserstats(c, req, res, user, bot),
     supportsendmessagetouser: async (c, req, res, user) => supportsendmessagetouser(c, req, res, user, bot),
     telegram: async (c, req, res, user) => telegram(c, req, res, bot),
