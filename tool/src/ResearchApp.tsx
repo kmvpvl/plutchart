@@ -190,7 +190,7 @@ export default class ResearchApp extends React.Component <{}, IResearchAppState>
 
             /** stats mode */
             :this.state.mode === "support"?this.state.currentOrg === undefined?<></>:
-            <Support serverInfo={this.state.serverInfo}/>
+            <Support serverInfo={this.state.serverInfo} onSuccess={res=>this.displayInfo(res)} onError={err=>this.displayError(err)}/>
 
             /** content mode */
             :this.state.currentOrg === undefined?<></>:

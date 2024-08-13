@@ -19,6 +19,7 @@ export interface ISupportState {
 export default class Support extends React.Component<ISupportProps, ISupportState> {
     state: ISupportState = {};
     private tguseridRef: RefObject<HTMLInputElement> = React.createRef();
+    private messageRef: RefObject<HTMLTextAreaElement> = React.createRef();
     loadUser(tguserid?: string) {
         //debugger
         tguserid = tguserid?tguserid:this.tguseridRef.current?.value;
@@ -37,6 +38,12 @@ export default class Support extends React.Component<ISupportProps, ISupportStat
         return <div className="support-container">
             <div><input type="text" placeholder="Telegram id" ref={this.tguseridRef}/><button onClick={this.loadUser.bind(this, this.tguseridRef.current?.value)}>Load</button></div>
             {this.state.userStats?<>
+            <div>
+                <div>Name: {this.state.userStats?.userData.name}</div>
+                <div>Lang: {this.state.userStats?.userData.nativelanguage}</div>
+                <div>Birthdate: {this.state.userStats.userData.birthdate}</div>
+                <div>Registered: {this.state.userStats?.userData.created}</div>
+            </div>
             <div> <span>Organizations</span>
                 {this.state.userStats?.orgs?.map((v: any, i: any)=><div key={i}>{v.name}</div>)}
             </div>
@@ -52,6 +59,20 @@ export default class Support extends React.Component<ISupportProps, ISupportStat
             <div>
                 <Charts vector={this.state.userStats.observeAssessments.ownVector} label="Own vector"/> 
                 <Charts vector={this.state.userStats.observeAssessments.othersVector} label="Others"/> 
+            </div>
+            <div>
+                <textarea placeholder="Type message to user here" ref={this.messageRef}></textarea>
+                <button onClick={()=>{
+                    serverCommand("supportsendmessagetouser", this.props.serverInfo, JSON.stringify({
+                        uid: this.state.userStats.userData._id,
+                        message: this.messageRef.current?.value
+                    }), res=>{
+                        if (this.props.onSuccess) this.props.onSuccess("Message was sent successfully")
+                    }, err=>{
+                        if (this.props.onError) this.props.onError(err);
+                    })
+                }}
+                >Send message to user</button>
             </div>
             </>:<></>}
         </div>
