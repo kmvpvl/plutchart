@@ -12,14 +12,19 @@ export interface ISupportProps {
 }
 
 export interface ISupportState {
+    usersRating?: Array<any>; 
     userStats?: any;
 
 }
 
 export default class Support extends React.Component<ISupportProps, ISupportState> {
     state: ISupportState = {};
+    private usersList: RefObject<HTMLSelectElement> = React.createRef();
     private tguseridRef: RefObject<HTMLInputElement> = React.createRef();
     private messageRef: RefObject<HTMLTextAreaElement> = React.createRef();
+    componentDidMount(): void {
+        this.loadUsersRating();
+    }
     loadUser(tguserid?: string) {
         //debugger
         tguserid = tguserid?tguserid:this.tguseridRef.current?.value;
@@ -27,15 +32,35 @@ export default class Support extends React.Component<ISupportProps, ISupportStat
             if (this.props.pending) this.props.pending?.current?.incUse();
             serverCommand("supportuserstats", this.props.serverInfo, JSON.stringify({tguserid: tguserid}), res=> {
                 if (this.props.pending) this.props.pending?.current?.decUse();
-                this.setState({userStats: res});
-            }, err=>{
+                const nState: ISupportState = this.state;
+                nState.userStats = res;
+                this.setState(nState);
+                }, err=>{
                 if (this.props.pending) this.props.pending?.current?.decUse();
                 if (this.props.onError) this.props.onError(err);
             })
         }
     }
+    loadUsersRating() {
+        if (this.props.pending) this.props.pending?.current?.incUse();
+        serverCommand("supportusersrating", this.props.serverInfo, undefined, res=> {
+            if (this.props.pending) this.props.pending?.current?.decUse();
+            const nState: ISupportState = this.state;
+            nState.usersRating = res;
+            this.setState(nState);
+        }, err=>{
+            if (this.props.pending) this.props.pending?.current?.decUse();
+            if (this.props.onError) this.props.onError(err);
+        })
+    }
+
+    onUserSelected(event: any) {
+        if (this.tguseridRef.current) this.tguseridRef.current.defaultValue = event.currentTarget.value;
+    }
+
     render(): ReactNode {
         return <div className="support-container">
+            <div><select onChange={this.onUserSelected.bind(this)} ref={this.usersList}>{this.state.usersRating?.map((v, i)=><option value={v.tguserid}>{v.assessments_count}-{v.name}-{v.nativelanguage}-{v.tguserid}</option>)}</select></div>
             <div><input type="text" placeholder="Telegram id" ref={this.tguseridRef}/><button onClick={this.loadUser.bind(this, this.tguseridRef.current?.value)}>Load</button></div>
             {this.state.userStats?<>
             <div>

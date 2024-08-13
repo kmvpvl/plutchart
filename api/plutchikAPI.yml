@@ -529,6 +529,13 @@ paths:
       responses:
         '200':
           description: OK
+  /supportusersrating:
+    description: Get all users with count of assessments
+    post:
+      operationId: supportusersrating
+      responses:
+        '200':
+          description: OK                
   /supportuserstats:
     description: Reveals stats of user. User info, preffered time to text, organizations, content, assessments
     post:

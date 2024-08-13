@@ -43,6 +43,15 @@ export async function getmatchlist(c: any, req: Request, res: Response, user: Us
     return res.status(200).json({matchlist: u, user: user.json});
 }
 
+export async function supportusersrating(c: any, req: Request, res: Response, user: User, bot: TelegramBot){
+    if (!user.json?.support_staff) return res.status(403).json({ok: false, errorText: "Support staff must do this request"});
+    try {
+        return res.status(200).json(await User.getUsersAssessmentsCount());
+    } catch (e: any) {
+        return res.status(404).json({ok: false, errorRaw: JSON.stringify(e), errorText: `Couldn't return users' list`});
+    }
+}
+
 export async function supportuserstats(c: any, req: Request, res: Response, user: User, bot: TelegramBot){
     const tguserid = req.body.tguserid;
     console.log(`${colours.fg.blue}Args: tguserid = '${tguserid}'${colours.reset}`);

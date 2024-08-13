@@ -639,4 +639,20 @@ export default class User extends MongoProto<IUser> {
         };
         return ret;
     }
+    static async getUsersAssessmentsCount(): Promise<Array<IUser>> {
+        const ret = await mongoUsers.aggregate([{
+            $lookup: {
+                  localField: "_id",
+                  foreignField: "uid",
+                  from: "assessments",
+                  pipeline: [{$group: {_id: "$uid", count: {$sum: 1}}}],
+                  as: "assessments_object",
+                  let: {uid: "$_id"}}
+            }, { $unwind: { path: "$assessments_object", preserveNullAndEmptyArrays: true}
+            }, { $addFields:{assessments_count: {$ifNull: ["$assessments_object.count", 0]}}
+            }, { $project: {assessments_object: 0}
+            }, { $sort: {assessments_count: -1}
+            }]);
+        return ret;
+    }
 }
