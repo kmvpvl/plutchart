@@ -1,14 +1,14 @@
 import { Charts } from 'plutchik-reactjs-components';
-import { EmotionType, EmotionVector } from '../emotion/emotion';
+import { Emotion, IEmotionVector } from 'plutchik-reactjs-components';
 import './insights.css'
 import React, { ReactNode } from 'react';
 
 interface IInsightsProps {
-    myvector: EmotionVector;
+    myvector: IEmotionVector;
     mycount: number;
-    othersvector: EmotionVector;
+    othersvector: IEmotionVector;
     otherscount: number;
-    onClick?: (emotion: EmotionType)=>void;
+    onClick?: (emotion: Emotion)=>void;
 }
 
 interface IInsightsState {
