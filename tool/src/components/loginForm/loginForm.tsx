@@ -27,14 +27,20 @@ const strSignOut = new MLString({
         ["ru", "Выйти"]])
 });
 
-export type LoginFormStates = 'connecting' | 'connected' | 'revealing_auth_code' | 'logging' | 'logged';
+export enum LoginFormStates {
+    connecting = 'connecting',
+    connected = 'connected',
+    revealing_auth_code = 'revealing_auth_code',
+    logging = 'logging',
+    logged = 'logged'
+};
 
 const StateNames = new Map<LoginFormStates, string>([
-    ["connecting", "Connecting..."],
-    ["connected", "Connected to cloud"],
-    ["revealing_auth_code", "Sending code of safety to you..."],
-    ["logging", "Trying check your code..."],
-    ["logged", "Logged in"]
+    [LoginFormStates.connecting, "Connecting..."],
+    [LoginFormStates.connected, "Connected to cloud"],
+    [LoginFormStates.revealing_auth_code, "Sending code of safety to you..."],
+    [LoginFormStates.logging, "Trying check your code..."],
+    [LoginFormStates.logged, "Logged in"]
 ]);
 
 interface ILoginFormProps {
@@ -62,7 +68,7 @@ export default class TGLogin extends React.Component<ILoginFormProps, ILoginForm
         this.serverInfo.tguserid = tgUI?parseInt(tgUI):undefined;
         this.serverInfo.sessiontoken = st?st:undefined;
         this.state = {
-            state: 'connecting'
+            state: LoginFormStates.connecting
         }
     }
     componentDidMount(): void {
@@ -78,9 +84,9 @@ export default class TGLogin extends React.Component<ILoginFormProps, ILoginForm
         serverFetch('version', 'GET', undefined, undefined,
             res=>{
                 this.serverInfo.version = res;
-                this.changeState('connected');
+                this.changeState(LoginFormStates.connected);
                 if (this.serverInfo.tguserid && this.serverInfo.sessiontoken) {
-                    this.changeState('logged');
+                    this.changeState(LoginFormStates.logged);
                     this.getuserinfo();
                 }
                 this.props.pending?.current?.decUse();
@@ -100,7 +106,7 @@ export default class TGLogin extends React.Component<ILoginFormProps, ILoginForm
                 ['plutchik-tguid', tgUI]
             ], undefined,
                 res=>{
-                    this.changeState('revealing_auth_code')
+                    this.changeState(LoginFormStates.revealing_auth_code)
                     this.props.pending?.current?.decUse();
                 }
                 ,err=> {
@@ -111,7 +117,7 @@ export default class TGLogin extends React.Component<ILoginFormProps, ILoginForm
         }
     }
     login() {
-        this.changeState('logging');
+        this.changeState(LoginFormStates.logging);
         if (!this.tgUserIdRef.current || !this.tgAuthCode.current) return;
         //debugger;
         const tgUI = this.tgUserIdRef.current.value;
@@ -126,7 +132,7 @@ export default class TGLogin extends React.Component<ILoginFormProps, ILoginForm
                 this.serverInfo.tguserid = parseInt(tgUI);
                 this.serverInfo.sessiontoken = res;
                 localStorage.setItem('plutchik_sessiontoken', res);
-                this.changeState('logged');
+                this.changeState(LoginFormStates.logged);
                 this.getuserinfo();
                 this.props.pending?.current?.decUse();
             },
@@ -139,7 +145,7 @@ export default class TGLogin extends React.Component<ILoginFormProps, ILoginForm
     logout() {
         localStorage.removeItem('plutchik_sessiontoken');
         delete this.serverInfo.sessiontoken;
-        this.changeState('connecting');
+        this.changeState(LoginFormStates.connecting);
         this.getServerVersion();
     }
     getuserinfo(){
@@ -157,7 +163,7 @@ export default class TGLogin extends React.Component<ILoginFormProps, ILoginForm
         const state = this.state.state;
         return <div className={ 'logged' === state ?'login-container logged':'login-container'}>
             { 'logged' !== state ?
-            <span className='login-intro'><div className='login-logo'>PLUT<img src="./plutchart_logo.svg" alt="PLUTCHART"/>CHART</div>
+            <span className='login-intro'><div className='login-logo'>PLUT<img src="/plutchart_logo.svg" alt=""/>CHART</div>
             <div>{ML(`Welcome! This content creation and editing system is part of a larger system for interaction between psychologists, their clients, employers and their employees. The system is aimed at increasing the comfort of interaction and improving the quality of life of all participants. The system will allow you to create content, send a task to the participant for assessment, monitor implementation and calculate the emotional azimuth of the participant. Read more details about the system here`)} (<a href={process.env.REACT_APP_LANDING_PAGE} target="_blank" rel="noreferrer">{process.env.REACT_APP_LANDING_PAGE}</a>)</div></span>:<span></span>}
 
             <div className='login-form'>
@@ -167,7 +173,7 @@ export default class TGLogin extends React.Component<ILoginFormProps, ILoginForm
                 <span className='login-tguserid'>
                     {'connecting' !== state && 'logged' !== state ? <input type="text" placeholder='Telegram user id' ref={this.tgUserIdRef} defaultValue={this.serverInfo.tguserid}/>:<></>}
                     {'connecting' !== state && 'logged' !== state ? <><button onClick={()=>this.getAuthCode()}>Get code</button><button onClick={()=>{
-                        this.setState({state: "revealing_auth_code"});
+                        this.setState({state: LoginFormStates.revealing_auth_code});
                     }}>I have code</button></>:<></>}
                 </span>
                 <span className='login-authcode'>

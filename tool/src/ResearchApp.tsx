@@ -1,5 +1,5 @@
 import React, { RefObject } from 'react';
-import './App.css';
+import './ResearchApp.css';
 import TGLogin, {LoginFormStates } from './components/loginForm/loginForm';
 import './model/common';
 import { IServerInfo, PlutchikError, serverCommand } from './model/common';
@@ -11,20 +11,20 @@ import Stats from './components/stats/stats';
 import Support from './components/support/support';
 import { Pending } from 'plutchik-reactjs-components';
 
-export type AppMode = "content" | "edit set name" | "users" | "stats" | "support";
+export type ResearchAppMode = "content" | "edit set name" | "users" | "stats" | "support";
 
-interface IAppState {
+interface IResearchAppState {
     logged: boolean;
     serverInfo: IServerInfo;
     userInfo?: any;
     currentOrg?: string;
     currentOrgStats?: any;
-    mode?: AppMode;
+    mode?: ResearchAppMode;
     orgs: any[];
 }
 
-export default class App extends React.Component <{}, IAppState> {
-    state: IAppState = {
+export default class ResearchApp extends React.Component <{}, IResearchAppState> {
+    state: IResearchAppState = {
         logged: false,
         serverInfo: {
             version: undefined,
@@ -35,7 +35,7 @@ export default class App extends React.Component <{}, IAppState> {
         userInfo: {},
         currentOrg: undefined,
         orgs: [],
-        mode: localStorage.getItem("plutchik_app_mode")?localStorage.getItem("plutchik_app_mode") as AppMode:"content"
+        mode: localStorage.getItem("plutchik_app_mode")?localStorage.getItem("plutchik_app_mode") as ResearchAppMode:"content"
     }
     messagesRef: RefObject<Infos> = React.createRef();
     pendingRef: RefObject<Pending> = React.createRef();
@@ -43,14 +43,14 @@ export default class App extends React.Component <{}, IAppState> {
     loginRef: RefObject<TGLogin> = React.createRef();
 
     private onLoginStateChanged(oldState: LoginFormStates, newState: LoginFormStates, info: IServerInfo) {
-        const nState: IAppState = this.state;
+        const nState: IResearchAppState = this.state;
         nState.logged = newState === 'logged';
         nState.serverInfo = info;
         this.setState(nState);
     }
 
     private onOrgSelected(orgid: string) {
-        const nState: IAppState = this.state;
+        const nState: IResearchAppState = this.state;
         nState.currentOrg = orgid;
         nState.currentOrgStats = undefined;
         this.loadOrganizationStats();
@@ -58,7 +58,7 @@ export default class App extends React.Component <{}, IAppState> {
     }
 
     public onUILoaded(ui: any) {
-        const nState: IAppState = this.state;
+        const nState: IResearchAppState = this.state;
         nState.userInfo = ui;
         this.setState(nState);
         this.loadOrganizations();
@@ -67,7 +67,7 @@ export default class App extends React.Component <{}, IAppState> {
         this.pendingRef?.current?.incUse();
         serverCommand('orgsattachedtouser', this.state.serverInfo, undefined, res=>{
             this.pendingRef.current?.decUse();
-            const nState: IAppState = this.state;
+            const nState: IResearchAppState = this.state;
             nState.orgs = res;
             this.onOrgsListUpdated();
         }, err=>{
@@ -83,7 +83,7 @@ export default class App extends React.Component <{}, IAppState> {
         localStorage.setItem('plutchik_currentOrg', org._id);
         const foundOrg = this.state.orgs.findIndex((v: any) =>v._id === org._id);
         if (foundOrg > -1) {
-            const nState: IAppState = this.state;
+            const nState: IResearchAppState = this.state;
             nState.orgs[foundOrg] = org;
         } else {
             this.state.orgs.push(org);
@@ -91,8 +91,8 @@ export default class App extends React.Component <{}, IAppState> {
         this.onOrgsListUpdated();
     }
 
-    onModeChanged(newMode: AppMode) {
-        const nState: IAppState = this.state;
+    onModeChanged(newMode: ResearchAppMode) {
+        const nState: IResearchAppState = this.state;
         localStorage.setItem("plutchik_app_mode", newMode);
         nState.mode = newMode;
         this.setState(nState);
@@ -122,7 +122,7 @@ export default class App extends React.Component <{}, IAppState> {
     }
 
     onOrgsListUpdated() {
-        const nState: IAppState = this.state;
+        const nState: IResearchAppState = this.state;
         nState.currentOrg = localStorage.getItem('plutchik_currentOrg') === null?undefined:localStorage.getItem('plutchik_currentOrg') as string;
         nState.currentOrgStats = undefined;
         this.loadOrganizationStats();
@@ -130,7 +130,7 @@ export default class App extends React.Component <{}, IAppState> {
     }
 
     onUserMngOrgUpdated(org: any) {
-        const nState: IAppState = this.state;
+        const nState: IResearchAppState = this.state;
         const foundEl = this.state.orgs.findIndex(v=>v._id === org._id);
         nState.orgs[foundEl] = org;
         this.setState(nState);
@@ -159,7 +159,7 @@ export default class App extends React.Component <{}, IAppState> {
         serverCommand("getorganizationstats", this.state.serverInfo, JSON.stringify({
             oid: this.state.currentOrg}), res=>{
                 this.pendingRef.current?.decUse();
-                const nState: IAppState = this.state;
+                const nState: IResearchAppState = this.state;
                 nState.currentOrgStats = res;
                 this.prepareStats();
                 this.setState(nState);

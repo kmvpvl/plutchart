@@ -3,7 +3,7 @@ import './userMng.css';
 import React from 'react';
 import { IServerInfo, PlutchikError, relativeDateString, serverCommand } from '../../model/common';
 import Insights from '../insights/insights';
-import { EmotionType, Flower } from '../emotion/emotion';
+import { Emotion, Flower } from 'plutchik-reactjs-components';
 import MLString from '../../model/mlstring';
 import { Pending } from 'plutchik-reactjs-components';
 export interface  IUserMngProps {
@@ -128,7 +128,7 @@ export default class UserMng extends React.Component<IUserMngProps, IUserMngStat
                 <div>Stats: {this.state.invitationStats?<>{this.state.invitationStats.assigned?`Assigned ${new Date(this.state.invitationStats.assigndate).toLocaleString()}, Progress: ${this.state.invitationStats.contentassessed} of ${this.state.invitationStats.contentcount}, ${this.state.invitationStats.closed?`Closed ${new Date(this.state.invitationStats.closedate).toLocaleString()}`:"Not closed"}`:"Not assigned"}</>:
                 <></>}</div>
                 {observe !== undefined && observe.ownVector !== undefined?
-                <><Insights mycount={observe.ownVector.count} myvector={observe.ownVector} otherscount={observe.othersVector.count} othersvector={observe.othersVector} onClick={(emotion: EmotionType)=>{
+                <><Insights mycount={observe.ownVector.count} myvector={observe.ownVector} otherscount={observe.othersVector.count} othersvector={observe.othersVector} onClick={(emotion: Emotion)=>{
                     serverCommand("reviewemotionaboveothers", this.props.serverInfo, JSON.stringify({
                         emotion: emotion, 
                         invitationid: this.state.selectedInvitation._id}), res=>{

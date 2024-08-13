@@ -1,7 +1,7 @@
 import React, { RefObject, createRef } from "react";
 import { IServerInfo, PlutchikError, serverCommand } from "../../model/common";
 import "./organizations.css";
-import { AppMode } from "../../App";
+import { ResearchAppMode } from "../../ResearchApp";
 import { Pending } from "plutchik-reactjs-components";
 
 interface IOrgsProps {
@@ -10,11 +10,11 @@ interface IOrgsProps {
     onSuccess?: (text: string)=>void,
     onCreateNewOrg?: ( org: any)=>void,
     onOrgSelected:(orgid: string)=>void,
-    onModeChanged: (newmode: AppMode)=>void,
+    onModeChanged: (newmode: ResearchAppMode)=>void,
     isSupportStaff: boolean;
     orgs: any[];
     currentOrg?: string;
-    mode: AppMode;
+    mode: ResearchAppMode;
     pending?: RefObject<Pending>
 }
 
@@ -80,7 +80,7 @@ export default class Organizations extends React.Component<IOrgsProps, IOrgsStat
     componentDidUpdate(prevProps: Readonly<IOrgsProps>, prevState: Readonly<IOrgsState>, snapshot?: any): void {
         const orgs = this.props.orgs;
         const cur_org = this.props.currentOrg;
-        if (orgs !== undefined && orgs.length > 1 && cur_org === undefined) {
+        if (orgs !== undefined && orgs.length >= 1 && cur_org === undefined) {
             this.orgSelected(orgs[0]._id);
         }
     }

@@ -1,9 +1,11 @@
 export type ErrorCode = "notauth" | "rolerequired" | "servernotresponding" | "badrequest" | "unknown" | "notfound";
 export class PlutchikError extends Error{
     code: ErrorCode;
-    constructor (code: ErrorCode, message: string){
-        super(`${code} - ${message}`);
+    command: string;
+    constructor (code: ErrorCode, message: string, command: string){
+        super(message);
         this.code = code;
+        this.command = command;
     }
 } 
 export type TServerVersion = {
@@ -22,12 +24,14 @@ export interface IServerInfo {
     sessiontoken?: string;
 }
 
+if (process.env.NODE_ENV === "development") {
 console.log(JSON.stringify(process.env));
+}
 export function serverFetch(command: string, method: string, headers?: HeadersInit, body?: BodyInit, successcb?: (res: any)=>void, failcb?: (err: PlutchikError)=>void) {
     const h: Headers = new Headers([
         ['Access-Control-Allow-Origin', '*'],
         ["ngrok-skip-browser-warning", "any"],
-        ["Content-Type", "application/json"]
+        ["Content-Type", "application/json; charset=utf-8"]
     ]);
     if (headers) {
         const oheaders = new Headers(headers);
@@ -47,7 +51,7 @@ export function serverFetch(command: string, method: string, headers?: HeadersIn
     })
     .catch((v)=>{
         if (v instanceof Error) {
-            if (failcb) failcb(new PlutchikError("servernotresponding", `command='${command}'; error='${v.message}'`));
+            if (failcb) failcb(new PlutchikError("servernotresponding", v.message, command));
         } else {
             v.json().then((j: any) =>{
                 let errcode: ErrorCode;
@@ -63,7 +67,7 @@ export function serverFetch(command: string, method: string, headers?: HeadersIn
                     break; 
                     default: errcode = "unknown";
                 }
-                const err = new PlutchikError(errcode, `command='${command}; url='${v.url}'; status='${v.status}'; text='${v.statusText}'; server_desc='${JSON.stringify(j)}'`);
+                const err = new PlutchikError(errcode, `url='${v.url}'; status='${v.status}'; text='${v.statusText}'; server_desc='${JSON.stringify(j)}'`, command);
                 if (failcb) failcb(err);
             })
             .catch((err: any)=> {
