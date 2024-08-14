@@ -1,7 +1,7 @@
 import React, { RefObject } from "react";
 import { IServerInfo, PlutchikError, relativeDateString, serverCommand } from "../../model/common";
 import './content.css';
-import { Flower } from "../emotion/emotion";
+import { Flower } from "plutchik-reactjs-components";
 import MLString from "../../model/mlstring";
 import { MLStringEditor } from "../mlstring/mlstring";
 import { Pending } from "plutchik-reactjs-components";
