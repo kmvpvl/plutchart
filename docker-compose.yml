@@ -25,6 +25,23 @@ services:
     container_name: plutchart-tool
     environment:
       - PORT=3002
+  plutchart-wiki:
+    image: lscr.io/linuxserver/wikijs:latest
+    container_name: plutchart-wiki
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      #- DB_TYPE=sqlite #optional
+      #- DB_HOST= #optional
+      #- DB_PORT= #optional
+      #- DB_NAME= #optional
+      #- DB_USER= #optional
+      #- DB_PASS= #optional
+    volumes:
+      - ./wiki/config:/config
+      - ./wiki/data:/data
+    restart: unless-stopped
 networks:
   default:
     name: base-network
