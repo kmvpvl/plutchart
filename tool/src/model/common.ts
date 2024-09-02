@@ -2,9 +2,11 @@ export type ErrorCode = "notauth" | "rolerequired" | "servernotresponding" | "ba
 export class PlutchikError extends Error{
     code: ErrorCode;
     command: string;
-    constructor (code: ErrorCode, message: string, command: string){
+    rawData: any;
+    constructor (code: ErrorCode, message: string, rawData: any, command: string){
         super(message);
         this.code = code;
+        this.rawData = rawData;
         this.command = command;
     }
 } 
@@ -51,7 +53,7 @@ export function serverFetch(command: string, method: string, headers?: HeadersIn
     })
     .catch((v)=>{
         if (v instanceof Error) {
-            if (failcb) failcb(new PlutchikError("servernotresponding", v.message, command));
+            if (failcb) failcb(new PlutchikError("servernotresponding", v.message, v, command));
         } else {
             v.json().then((j: any) =>{
                 let errcode: ErrorCode;
@@ -67,7 +69,7 @@ export function serverFetch(command: string, method: string, headers?: HeadersIn
                     break; 
                     default: errcode = "unknown";
                 }
-                const err = new PlutchikError(errcode, `url='${v.url}'; status='${v.status}'; text='${v.statusText}'; server_desc='${JSON.stringify(j)}'`, command);
+                const err = new PlutchikError(errcode, `url='${v.url}'; status='${v.status}'; text='${v.statusText}'; server_desc='${JSON.stringify(j)}'`, j, command);
                 if (failcb) failcb(err);
             })
             .catch((err: any)=> {

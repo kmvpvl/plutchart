@@ -11,11 +11,14 @@ const root = ReactDOM.createRoot(
 
 function getContentByPath(): React.ReactNode {
   const path = window.location.pathname;
+  const params = new URLSearchParams(window.location.search);
   switch (path) {
     case "/tg/insights":
-      return <WebApp mode="insights"/>;
+      return <WebApp mode="insights" params={params}/>;
     case "/tg/assess":
-      return <WebApp mode="assess"/>;
+      return <WebApp mode="assess" params={params}/>;
+    case "/tg/match":
+      return <WebApp mode="match" params={params}/>;
     default:
       return <ResearchApp />;
   }

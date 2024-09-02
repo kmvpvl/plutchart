@@ -4,7 +4,7 @@ import colours from "../model/colours";
 import TelegramBot, { InlineKeyboardButton} from 'node-telegram-bot-api';
 import Organization, { IOrganization, IResponseToInvitation, mongoOrgs } from '../model/organization';
 import Content, { ContentGroup, IContent, mongoContent } from '../model/content';
-import User, { mongoUsers } from '../model/user';
+import User, { GenderType, mongoUsers } from '../model/user';
 import { google } from 'googleapis';
 import { Types } from 'mongoose';
 import path from 'path';
@@ -227,6 +227,7 @@ function tg_bot_set_delete_menu(lang: string):TelegramBot.SendMessageOptions {
 function tg_bot_settings_menu(lang: string, user: User):InlineKeyboardButton[][] {
     const age = user.json?.birthdate? new Date().getFullYear() - user.json?.birthdate.getFullYear():'??';
     let gender = '??';
+    const readyToMatch = user.json?.datingsettings?.readytomatch!==undefined?user.json?.datingsettings?.readytomatch:false;
     switch(user.json?.gender) {
         case 'male': gender = ML('Male', lang);
             break;
@@ -248,6 +249,7 @@ function tg_bot_settings_menu(lang: string, user: User):InlineKeyboardButton[][]
         {text: `${ML('Share my location', lang)}: ${location}`, callback_data: 'share_location'}
     ], [
         {text: `${set_gender(lang)}: ${gender}`, callback_data: 'select_gender'},
+    ], [
         {text: deleteMyAccount(lang), callback_data: 'delete_account'}
     ]];
     fullMenu.push(...mainKeyBoardMenu(lang)); 
@@ -290,11 +292,10 @@ function invitation_declined (lang: string){
 export function mainKeyBoardMenu(lang?: string): InlineKeyboardButton[][] {
     return [[
         {text: ML('Assess new content', lang), web_app: {url: `${process.env.tg_web_hook_server}/assess.htm`}}, 
-        ],[
+        ], [
         {text: ML('Insights', lang), web_app: {url: `${process.env.tg_web_hook_server}/insights.htm`}},
-    ],/*[
-        {text: ML('Get matched', lang), web_app: {url: `${process.env.tg_web_hook_server}/match.htm`}},
-        {text: ML('My settings', lang), callback_data: 'settings'}
+        ] /*, [
+        {text: ML(`Find a like-minded person`, lang), web_app: {url: `${process.env.tg_web_app}/match`}},
     ]*/];
 }
 
@@ -356,7 +357,7 @@ async function callback_process(tgData: TelegramBot.Update, bot: TelegramBot, us
             break;
         case 'set_gender':
             const gender = cbcommand[1];
-            await user.setGender(gender);
+            await user.setGender(gender as GenderType);
             bot.answerCallbackQuery(tgData.callback_query?.id as string, {text: str_gender_changed(ulang)});
             bot.editMessageReplyMarkup({inline_keyboard: tg_bot_settings_menu(ulang, user)}, {message_id: tgData.callback_query?.message?.message_id, chat_id: chat_id});
             break;

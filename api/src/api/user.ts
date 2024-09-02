@@ -1,12 +1,13 @@
 import { Request, Response } from 'express';
 import colours from '../model/colours';
-import User, { IUserStats } from "../model/user";
+import User, { IDatingSettings, IUserStats } from "../model/user";
 import Organization from '../model/organization';
 import TelegramBot from 'node-telegram-bot-api';
 import { Types } from 'mongoose';
 import PlutchikError from '../model/error';
 import { mainKeyBoardMenu } from './telegram';
 import ML from '../model/mlstring';
+import Match from '../model/match';
 
 export default async function userinfo(c: any, req: Request, res: Response, user: User) {
     return res.status(200).json(user.json);
@@ -110,5 +111,79 @@ export async function reminduseraboutinvitation(c: any, req: Request, res: Respo
         }
     } catch(e: any) {
         return res.status(404).json({ok: "FAIL", message: `invitationid = '${invitationid}' not found`});
+    }
+}
+
+export async function getnextmatchcandidate(c: any, req: Request, res: Response, user: User, bot: TelegramBot){
+    const uid_str = req.body.uid;
+    const uid = uid_str === undefined?undefined:new Types.ObjectId(uid_str);
+    try {
+        const mcand = await user.nextMatch(uid);
+        return res.status(200).json({
+            matchcandidate: mcand,
+            user: user.json,
+            vectors: await user.getDeltaMatch(mcand)
+        });
+    } catch (err: any) {
+        return res.status(404).json({ok: false, description: 'Could not get next match candidate', user: user.json});
+    }
+}
+
+export async function skipmatchcandidate(c: any, req: Request, res: Response, user: User, bot: TelegramBot){
+    try {
+        const candidate_uid = new Types.ObjectId(req.body.candidateid);
+        await user.skipMatchCandidate(candidate_uid);
+        return getnextmatchcandidate(c, req, res, user, bot);
+    } catch (err: any) {
+        return res.status(404).json({ok: false, description: 'Could not get next match candidate (skip)', user: user.json});
+    }
+}
+
+export async function likematchcandidate(c: any, req: Request, res: Response, user: User, bot: TelegramBot){
+    try {
+        const candidate_uid = new Types.ObjectId(req.body.candidateid);
+        const candidate = new User(candidate_uid);
+        try {
+            await candidate.load();
+            await user.likeMatchCandidate(candidate_uid);
+            //!!! need to check either candidate already liked the user or user liked the candidate first?
+            try {
+                const candidatematches = new Match(candidate_uid);
+                await candidatematches.load();
+                if (candidatematches.json.liked.filter(m=>m.equals(this.uid)).length > 0) {
+                    //mutual like 
+                    //???
+                    bot.sendMessage(/*candidate.json?.tguserid*/user.json?.tguserid as number, `${user.json?.name} and you have liked your emotional vectors mutually. Do you want to message each other`, {reply_markup: {inline_keyboard:[[{text:ML(`Find a like-minded person`, candidate.json?.nativelanguage), web_app:{url:`${process.env.tg_web_app}/match?uid=${candidate_uid}`}}]]}});
+                    return getnextmatchcandidate(c, req, res, user, bot);
+                } else {
+                    // non-mutual like
+                }
+            } catch (e) {
+                //candidate dont have matches
+            }
+
+            bot.sendMessage(/*candidate.json?.tguserid*/user.json?.tguserid as number, `${user.json?.name} liked your emotional vector. Do you want try to match back`, {reply_markup: {inline_keyboard:[[{text:ML(`Find a like-minded person`, candidate.json?.nativelanguage), web_app:{url:`${process.env.tg_web_app}/match?uid=${candidate_uid}`}}]]}});
+        } catch {
+            //!!! couldn't find user
+        }
+        return getnextmatchcandidate(c, req, res, user, bot);
+    } catch (err: any) {
+        return res.status(404).json({ok: false, description: 'Could not get next match candidate (skip)', user: user.json});
+    }
+}
+
+export async function setmatchoptions(c: any, req: Request, res: Response, user: User, bot: TelegramBot){
+    const resetall = req.body.resetall;
+    req.body.resetall = undefined
+    const clearskippedlist = req.body.clearskippedlist;
+    req.body.clearskippedlist = undefined
+    const clearlikedlist = req.body.clearlikedlist;
+    req.body.clearlikedlist = undefined;
+    const options: IDatingSettings = req.body;
+    try {
+        await user.setMatchOptions(options, clearskippedlist, clearlikedlist, resetall);
+        return res.status(200).json({ok: true});
+    } catch (err: any) {
+        return res.status(404).json({ok: false, description: 'Could not get next match candidate (skip)', user: user.json});
     }
 }

@@ -15,6 +15,7 @@ export type ErrorCode =
     | "user:multiplesession" /* User has session not only once*/
     | "user:nonextcontent" /* User has done all assessments*/
     | "user:broken" /* User object is not consistencyful*/
+    | "user:match" /* Coukld not calculate match vectors*/
     | "content:notfound" /* Content id not found*/
     | "content:notloaded" /* Content id not loaded*/
     | "group:notfound" /* Content group id not found*/
@@ -40,6 +41,7 @@ export default class PlutchikError extends Error {
             ["user:multiplesession", "User has more that one active session"],
             ["user:nonextcontent", "User has done all assessments"],
             ["user:broken",  "User object is not consistencyful"],
+            ["user:match", "Could not calculate match vectors"],
             ["content:notfound", "Content id not found"],
             ["content:notloaded", "Content id not loaded"],
             ["group:notfound", "Content group id not found"],

@@ -1,6 +1,5 @@
 import OpenAPIBackend, { Context, Document, UnknownParams } from 'openapi-backend';
 import express, { Application, Request, Response } from "express";
-import morgan from "morgan";
 import cors from 'cors';
 import version from './api/version';
 import { tggetsessiontoken, tgcreateauthcode } from './api/auth';
@@ -10,14 +9,14 @@ import checkSettings, { setupTelegramBot } from './model/settings';
 import fs from 'fs';
 import path from 'path';
 import User from './model/user';
-import userinfo, {getinsights, getmatchlist, reminduseraboutinvitation, ogranizationAttachedToUser, reviewemotionaboveothers, supportuserstats, supportsendmessagetouser, supportusersrating} from './api/user';
+import userinfo, {getinsights, getmatchlist, reminduseraboutinvitation, ogranizationAttachedToUser, reviewemotionaboveothers, supportuserstats, supportsendmessagetouser, supportusersrating, getnextmatchcandidate, skipmatchcandidate, likematchcandidate, setmatchoptions} from './api/user';
 import {createorganization, getinvitationstats, getorganizationstats, getusersassessedorganizationcontent, renameorganization, requesttoassignorgtouser} from './api/organization';
 import { Md5 } from 'ts-md5';
 import { Types } from 'mongoose';
 import getorgcontent, { addcontent, getcontentstatistics } from './api/content';
 import addassessment from './api/addassessment';
 import getnextcontentitem from './api/getnextcontentitem';
-import { createHash, createHmac } from 'crypto';
+import { createHash, createHmac, randomUUID } from 'crypto';
 import colours from './model/colours';
 import ML from './model/mlstring';
 
@@ -53,6 +52,10 @@ api.register({
     addcontent: async (c, req, res, user) => addcontent(c, req, res, user),
     addassessment: async (c, req, res, user) => addassessment(c, req, res, user),
     getnextcontentitem: async (c, req, res, user) => getnextcontentitem(c, req, res, user, bot),
+    getnextmatchcandidate: async (c, req, res, user) => getnextmatchcandidate(c, req, res, user, bot),
+    likematchcandidate: async (c, req, res, user) => likematchcandidate(c, req, res, user, bot),
+    skipmatchcandidate: async (c, req, res, user) => skipmatchcandidate(c, req, res, user, bot),
+    setmatchoptions: async (c, req, res, user) => setmatchoptions(c, req, res, user, bot),
     getcontentstatistics: async (c, req, res, user) => getcontentstatistics(c, req, res, user),
     getinsights: async (c, req, res, user) => getinsights(c, req, res, user),
     reviewemotionaboveothers: async (c, req, res, user) => reviewemotionaboveothers(c, req, res, user),
@@ -85,7 +88,7 @@ api.registerSecurityHandler('PlutchikAuthSessionToken', async (context, req: Req
 api.registerSecurityHandler('PlutchikAuthCode', async (context, req: Request, res, user: User)=>{
     const sauthcode = req.headers["plutchik-authcode"];
     const hash = Md5.hashStr(`${user.uid} ${sauthcode}`);
-    return hash === user.json?.auth_code_hash;
+    return hash === user.json.auth_code_hash;
 });
 
 api.registerSecurityHandler('TGQueryCheckString', async (context, req: Request, res, user: User)=>{
@@ -108,19 +111,22 @@ api.registerSecurityHandler('TGQueryCheckString', async (context, req: Request, 
 
 export const app: Application = express();
 app.use(express.json());
-app.use(morgan('tiny'));
 app.use(cors());
 
 // use as express middleware
 app.use(async (req: Request, res: Response) => {
+    const requestUUID = randomUUID();
+    const requestStart = new Date();
+    req.headers["plutchart-uuid"] = requestUUID;
+    req.headers["plutchart-start"] = requestStart.toISOString();
+    console.log(`🚀 ${requestStart.toISOString()} - [${requestUUID}] - ${req.method} ${colours.fg.yellow}${req.path}\n${colours.fg.blue}headers: ${Object.keys(req.headersDistinct).filter(v => v.startsWith("plutchik-")).map(v => `${v} = '${req.headersDistinct[v]}'`).join(", ")}\nbody: ${Object.keys(req.body).map(v => `${v} = '${req.body[v]}'`).join(", ")}\nquery: ${Object.keys(req.query).map(v => `${v} = '${req.query[v]}'`).join(", ")}${colours.reset}`);
+
     const stguid = req.headers["plutchik-tguid"];
-    const sauthcode = req.headers["plutchik-authcode"];
-    const ssessiontoken = req.headers["plutchik-sessiontoken"];
-    console.log(`🔥 tguid='${stguid}'; authcode='${sauthcode}'; sessiontoken='${ssessiontoken}'`);
     const user = stguid === undefined?undefined:await User.getUserByTgUserId(parseInt(stguid as string));
+    let ret;
 
     try {
-        return await api.handleRequest({
+        ret =  await api.handleRequest({
             method: req.method,
             path: req.path,
             body: req.body,
@@ -129,8 +135,12 @@ app.use(async (req: Request, res: Response) => {
         }, 
         req, res, user);
     } catch (e){
-        return res.status(500).json({code: "Wrong parameters", description: `Request ${req.url}- ${(e as Error).message}`});
+        ret =  res.status(500).json({code: "Wrong parameters", description: `Request ${req.url}- ${(e as Error).message}`});
     }
+    const requestEnd = new Date();
+    req.headers["perfomance-request-end"] = requestEnd.toISOString();
+    console.log(`🏁 ${requestStart.toISOString()} - [${requestUUID}] - ${req.method} ${res.statusCode >= 200 && res.statusCode < 400 ? colours.fg.green : colours.fg.red}${req.path}${colours.reset} - ${res.statusCode} - ${requestEnd.getTime() - requestStart.getTime()} ms`);
+    return ret;
 });
 
 export const server = app.listen(PORT, () => {
