@@ -31,11 +31,13 @@ export default class Match extends MongoProto<IMatch> {
     async addSkipped(uid: Types.ObjectId) {
         await this.checkData();
         this.data?.skipped.push(uid);
+        if (this.data) this.data.liked = this.data.liked.filter(u=>!u.equals(uid));
         await this.save();
     }
     async addLiked(uid: Types.ObjectId) {
         await this.checkData();
         this.data?.liked.push(uid);
+        if (this.data) this.data.skipped = this.data.skipped.filter(u=>!u.equals(uid));
         await this.save();
     }
 
@@ -48,5 +50,14 @@ export default class Match extends MongoProto<IMatch> {
         await this.checkData();
         this.data?.liked.splice(0, this.data.liked.length);
         await this.save();
+    }
+    static async isMutual(uid1: Types.ObjectId, uid2:Types.ObjectId): Promise<boolean> {
+        try {
+            const m1 = await Match.getByUid(uid1);
+            const m2 = await Match.getByUid(uid2);
+            return m1.json.liked.filter(uid=>uid.equals(uid2)).length > 0 && m2.json.liked.filter(uid=>uid.equals(uid1)).length > 0
+        } catch(e) {
+            return false;
+        }
     }
 }

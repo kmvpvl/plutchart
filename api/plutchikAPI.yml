@@ -398,6 +398,43 @@ paths:
       responses:
         '200':
           description: OK
+  /getmessageswithmutualmatch:
+    description: Loads the messages with mutual match person
+    post:
+      operationId: getmessageswithmutualmatch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uid:
+                  type: string
+              required:
+                - uid
+      responses:
+        '200':
+          description: OK
+  /sendmessagetomutualmatch:
+    description: Sends message and notification to mutual match person
+    post:
+      operationId: sendmessagetomutualmatch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                to:
+                  type: array
+                text: 
+                  type: string
+              required:
+                - to
+                - text
+      responses:
+        '200':
+          description: OK
   /likematchcandidate:
     description: Adds user to liked list
     post:

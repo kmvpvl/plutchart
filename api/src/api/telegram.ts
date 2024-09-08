@@ -294,9 +294,9 @@ export function mainKeyBoardMenu(lang?: string): InlineKeyboardButton[][] {
         {text: ML('Assess new content', lang), web_app: {url: `${process.env.tg_web_hook_server}/assess.htm`}}, 
         ], [
         {text: ML('Insights', lang), web_app: {url: `${process.env.tg_web_hook_server}/insights.htm`}},
-        ] /*, [
+        ] , [
         {text: ML(`Find a like-minded person`, lang), web_app: {url: `${process.env.tg_web_app}/match`}},
-    ]*/];
+    ]];
 }
 
 async function enumUnclosedInvitations(user: User, lang: string): Promise<string> {

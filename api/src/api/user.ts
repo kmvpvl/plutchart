@@ -8,6 +8,7 @@ import PlutchikError from '../model/error';
 import { mainKeyBoardMenu } from './telegram';
 import ML from '../model/mlstring';
 import Match from '../model/match';
+import Message from '../model/messages';
 
 export default async function userinfo(c: any, req: Request, res: Response, user: User) {
     return res.status(200).json(user.json);
@@ -119,13 +120,16 @@ export async function getnextmatchcandidate(c: any, req: Request, res: Response,
     const uid = uid_str === undefined?undefined:new Types.ObjectId(uid_str);
     try {
         const mcand = await user.nextMatch(uid);
+        const mutuallike = mcand._id !== undefined?await Match.isMutual(user.uid, mcand._id):false;
         return res.status(200).json({
             matchcandidate: mcand,
             user: user.json,
-            vectors: await user.getDeltaMatch(mcand)
+            vectors: await user.getDeltaMatch(mcand),
+            mutuallike: mutuallike,
+            messages: mutuallike && mcand._id !== undefined?await Message.getByUids(user.uid, mcand._id):undefined
         });
     } catch (err: any) {
-        return res.status(404).json({ok: false, description: 'Could not get next match candidate', user: user.json});
+        return res.status(404).json({ok: false, description: 'Could not get next match candidate', user: user.json, mutuals: await user.getMutualMatches()});
     }
 }
 
@@ -153,7 +157,7 @@ export async function likematchcandidate(c: any, req: Request, res: Response, us
                 if (candidatematches.json.liked.filter(m=>m.equals(this.uid)).length > 0) {
                     //mutual like 
                     //???
-                    bot.sendMessage(/*candidate.json?.tguserid*/user.json?.tguserid as number, `${user.json?.name} and you have liked your emotional vectors mutually. Do you want to message each other`, {reply_markup: {inline_keyboard:[[{text:ML(`Find a like-minded person`, candidate.json?.nativelanguage), web_app:{url:`${process.env.tg_web_app}/match?uid=${candidate_uid}`}}]]}});
+                    bot.sendMessage(candidate.json?.tguserid as number, `${user.json?.name} and you have liked your emotional vectors mutually. Do you want to message each other`, {reply_markup: {inline_keyboard:[[{text:ML(`Text with ${user.json?.name}`, candidate.json?.nativelanguage), web_app:{url:`${process.env.tg_web_app}/match?uid=${candidate_uid}`}}]]}});
                     return getnextmatchcandidate(c, req, res, user, bot);
                 } else {
                     // non-mutual like
@@ -162,7 +166,7 @@ export async function likematchcandidate(c: any, req: Request, res: Response, us
                 //candidate dont have matches
             }
 
-            bot.sendMessage(/*candidate.json?.tguserid*/user.json?.tguserid as number, `${user.json?.name} liked your emotional vector. Do you want try to match back`, {reply_markup: {inline_keyboard:[[{text:ML(`Find a like-minded person`, candidate.json?.nativelanguage), web_app:{url:`${process.env.tg_web_app}/match?uid=${candidate_uid}`}}]]}});
+            bot.sendMessage(candidate.json?.tguserid as number, `${user.json?.name} liked your emotional vector. Do you want try to match back`, {reply_markup: {inline_keyboard:[[{text:ML(`Check emotion vector of candidate`, candidate.json?.nativelanguage), web_app:{url:`${process.env.tg_web_app}/match?uid=${candidate_uid}`}}]]}});
         } catch {
             //!!! couldn't find user
         }
@@ -185,5 +189,34 @@ export async function setmatchoptions(c: any, req: Request, res: Response, user:
         return res.status(200).json({ok: true});
     } catch (err: any) {
         return res.status(404).json({ok: false, description: 'Could not get next match candidate (skip)', user: user.json});
+    }
+}
+
+export async function sendmessagetomutualmatch(c: any, req: Request, res: Response, user: User, bot: TelegramBot){
+    const to_str: Array<string> = req.body.to;
+    const to = to_str.map(to_uid=>new Types.ObjectId(to_uid));
+    const text: string = req.body.text;
+    try {
+        const message = new Message(undefined, {
+            uidfrom: user.uid,
+            uidto: to,
+            text: text,
+            created: new Date()
+        });
+        await message.save();
+        const messages = await Message.getByUids(user.uid, to[0]);
+        return res.status(200).json(messages);
+    } catch (err: any) {
+        return res.status(400).json({ok: false, description: 'Could not send message to mutual match', user: user.json});
+    }
+}
+
+export async function getmessageswithmutualmatch(c: any, req: Request, res: Response, user: User, bot: TelegramBot){
+    const uid: Types.ObjectId = new Types.ObjectId(req.body.uid);
+    try {
+        const messages = await Message.getByUids(user.uid, uid);
+        return res.status(200).json(messages);
+    } catch (err: any) {
+        return res.status(400).json({ok: false, description: 'Could not get messages with mutual match', user: user.json});
     }
 }

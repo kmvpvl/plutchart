@@ -98,6 +98,311 @@ const plutchik_strings = new Map([
             , [`it`, `Premi il pulsante per richiedere nuovi elementi di contenuto`]
         ])
     ],
+    [`Write message here...`,
+        new Map([
+            [`de`, `Schreiben Sie hier eine Nachricht...`]
+            , [`fr`, `Écrivez un message ici...`]
+            , [`es`, `Escribe un mensaje aquí...`]
+            , [`uk`, `Напишіть повідомлення тут...`]
+            , [`ru`, `Напишите сообщение здесь...`]
+            , [`it`, `Scrivi un messaggio qui...`]
+        ])
+    ],
+    [`common assessments`,
+        new Map([
+            [`de`, `gemeinsame Beurteilungen`]
+            , [`fr`, `évaluations communes`]
+            , [`es`, `Evaluaciones comunes`]
+            , [`uk`, `загальні оцінки`]
+            , [`ru`, `общие оценки`]
+            , [`it`, `valutazioni comuni`]
+        ])
+    ],
+    [`male`,
+    new Map([
+        [`de`, `Männlich`]
+    ,   [`fr`, `Mâle`]
+    ,   [`es`, `Masculina`]
+    ,   [`uk`, `Чоловік`]
+    ,   [`ru`, `Мужчина`]
+        ])
+    ], [`female`,
+    new Map([
+        [`de`, `Weiblich`]
+    ,   [`fr`, `Femelle`]
+    ,   [`es`, `Femenina`]
+    ,   [`uk`, `Жінка`]
+    ,   [`ru`, `Женщина`]
+        ])
+    ], [`their`,
+    new Map([
+        [`de`, `Anderes Geschlecht`]
+    ,   [`fr`, `Leur`]
+    ,   [`es`, `Otro género`]
+    ,   [`uk`, `Інша стать`]
+    ,   [`ru`, `Другой`]
+        ])
+    ],
+    [`age`,
+        new Map([
+            [`de`, `Alter`]
+            , [`fr`, `âge`]
+            , [`es`, `edad`]
+            , [`uk`, `вік`]
+            , [`ru`, `возраст`]
+            , [`it`, `età`]
+        ])
+    ],
+    [`language`,
+        new Map([
+            [`de`, `Sprache`]
+            , [`fr`, `langue`]
+            , [`es`, `idioma`]
+            , [`uk`, `мова`]
+            , [`ru`, `язык`]
+            , [`it`, `lingua`]
+        ])
+    ],
+    [`gender`,
+        new Map([
+            [`de`, `Geschlecht`]
+            , [`fr`, `genre`]
+            , [`es`, `género`]
+            , [`uk`, `стать`]
+            , [`ru`, `пол`]
+            , [`it`, `genere`]
+        ])
+    ],
+    [`You're ready to match`,
+        new Map([
+            [`de`, `Du bist bereit für das Match`]
+            , [`fr`, `Vous êtes prêt à correspondre`]
+            , [`es`, `Estás listo para combinar`]
+            , [`uk`, `Ви готові до пари`]
+            , [`ru`, `Вы готовы к матчу`]
+            , [`it`, `Sei pronto per abbinare`]
+        ])
+    ],
+    [`You're not reachable`,
+        new Map([
+            [`de`, `Du bist nicht erreichbar`]
+            , [`fr`, `Vous n'êtes pas joignable`]
+            , [`es`, `No estás localizable`]
+            , [`uk`, `Ви недоступні`]
+            , [`ru`, `Вы недоступны`]
+            , [`it`, `Non sei raggiungibile`]
+        ])
+    ],
+    [`My mutuals`,
+        new Map([
+            [`de`, `Meine Genossenschaften`]
+            , [`fr`, `Mes mutuelles`]
+            , [`es`, `Mis mutuas`]
+            , [`uk`, `Мої взаємні стосунки`]
+            , [`ru`, `Мои взаимные`]
+            , [`it`, `I miei reciproci`]
+        ])
+    ],
+    [`No more match. Invite friend`,
+        new Map([
+            [`de`, `Kein Match mehr. Freund einladen`]
+            , [`fr`, `Plus de match. Inviter un ami`]
+            , [`es`, `No hay más coincidencias. Invitar a un amigo`]
+            , [`uk`, `Більше немає збігу. Запросити друга`]
+            , [`ru`, `Больше нет совпадений. Пригласить друга`]
+            , [`it`, `Nessuna corrispondenza. Invita un amico`]
+        ])
+    ],
+    [`Invite your friends to check out their emotional azimuth`,
+        new Map([
+            [`de`, `Laden Sie Ihre Freunde ein, ihren emotionalen Azimut zu überprüfen`]
+            , [`fr`, `Invitez vos amis à découvrir leur azimut émotionnel`]
+            , [`es`, `Invita a tus amigos a comprobar su acimut emocional.`]
+            , [`uk`, `Запросіть друзів перевірити їхній емоційний азимут`]
+            , [`ru`, `Пригласите своих друзей проверить их эмоциональный азимут.`]
+            , [`it`, `Invita i tuoi amici a dare un'occhiata al loro azimut emotivo`]
+        ])
+    ],
+    [`Clear all skipped`,
+        new Map([
+            [`de`, `Alle übersprungenen löschen`]
+            , [`fr`, `Effacer tout ce qui a été ignoré`]
+            , [`es`, `Borrar todo lo omitido`]
+            , [`uk`, `Очистити всі пропущені`]
+            , [`ru`, `Очистить все пропущенные`]
+            , [`it`, `Cancella tutto ciò che è stato saltato`]
+        ])
+    ],
+    [`Clear all liked`,
+        new Map([
+            [`de`, `Alle „Gefällt mir“-Angaben löschen`]
+            , [`fr`, `Effacer tout aimé`]
+            , [`es`, `Borrar todo lo que me gusta`]
+            , [`uk`, `Очистити все сподобалось`]
+            , [`ru`, `Очистить все понравившиеся`]
+            , [`it`, `Cancella tutto ciò che è piaciuto`]
+        ])
+    ],
+    [`I want to be matched`,
+        new Map([
+            [`de`, `Ich möchte gematcht werden`]
+            , [`fr`, `Je veux être jumelé`]
+            , [`es`, `Quiero que me emparejen`]
+            , [`uk`, `Я хочу, щоб мене збігали`]
+            , [`ru`, `Я хочу, чтобы меня подобрали`]
+            , [`it`, `Voglio essere abbinato`]
+        ])
+    ],
+    [`I don't want to be matched`,
+        new Map([
+            [`de`, `Ich möchte nicht gematcht werden`]
+            , [`fr`, `Je ne veux pas être mis en correspondance`]
+            , [`es`, `No quiero que me emparejen`]
+            , [`uk`, `Я не хочу, щоб мене збігали`]
+            , [`ru`, `Я не хочу, чтобы меня сравнивали.`]
+            , [`it`, `Non voglio essere abbinato`]
+        ])
+    ],
+    [`Skipped list is clear`,
+        new Map([
+            [`de`, `Die übersprungene Liste ist klar`]
+            , [`fr`, `La liste ignorée est claire`]
+            , [`es`, `La lista omitida está clara`]
+            , [`uk`, `Пропущений список зрозумілий`]
+            , [`ru`, `Пропущенный список очищен`]
+            , [`it`, `L'elenco saltato è chiaro`]
+        ])
+    ],
+    [`Liked list was clear`,
+        new Map([
+            [`de`, `Die Liste der Likes war klar`]
+            , [`fr`, `La liste des favoris était claire`]
+            , [`es`, `La lista de me gusta estaba clara`]
+            , [`uk`, `Список лайків був зрозумілим`]
+            , [`ru`, `Список понравившихся был очищен`]
+            , [`it`, `L'elenco dei preferiti era chiaro`]
+        ])
+    ],
+    [``,
+        new Map([
+            [`de`, ``]
+            , [`fr`, ``]
+            , [`es`, ``]
+            , [`uk`, ``]
+            , [`ru`, ``]
+            , [`it`, ``]
+        ])
+    ],
+    [``,
+        new Map([
+            [`de`, ``]
+            , [`fr`, ``]
+            , [`es`, ``]
+            , [`uk`, ``]
+            , [`ru`, ``]
+            , [`it`, ``]
+        ])
+    ],
+    [``,
+        new Map([
+            [`de`, ``]
+            , [`fr`, ``]
+            , [`es`, ``]
+            , [`uk`, ``]
+            , [`ru`, ``]
+            , [`it`, ``]
+        ])
+    ],
+    [``,
+        new Map([
+            [`de`, ``]
+            , [`fr`, ``]
+            , [`es`, ``]
+            , [`uk`, ``]
+            , [`ru`, ``]
+            , [`it`, ``]
+        ])
+    ],
+    [``,
+        new Map([
+            [`de`, ``]
+            , [`fr`, ``]
+            , [`es`, ``]
+            , [`uk`, ``]
+            , [`ru`, ``]
+            , [`it`, ``]
+        ])
+    ],
+    [``,
+        new Map([
+            [`de`, ``]
+            , [`fr`, ``]
+            , [`es`, ``]
+            , [`uk`, ``]
+            , [`ru`, ``]
+            , [`it`, ``]
+        ])
+    ],
+    [``,
+        new Map([
+            [`de`, ``]
+            , [`fr`, ``]
+            , [`es`, ``]
+            , [`uk`, ``]
+            , [`ru`, ``]
+            , [`it`, ``]
+        ])
+    ],
+    [``,
+        new Map([
+            [`de`, ``]
+            , [`fr`, ``]
+            , [`es`, ``]
+            , [`uk`, ``]
+            , [`ru`, ``]
+            , [`it`, ``]
+        ])
+    ],
+    [``,
+        new Map([
+            [`de`, ``]
+            , [`fr`, ``]
+            , [`es`, ``]
+            , [`uk`, ``]
+            , [`ru`, ``]
+            , [`it`, ``]
+        ])
+    ],
+    [``,
+        new Map([
+            [`de`, ``]
+            , [`fr`, ``]
+            , [`es`, ``]
+            , [`uk`, ``]
+            , [`ru`, ``]
+            , [`it`, ``]
+        ])
+    ],
+    [``,
+        new Map([
+            [`de`, ``]
+            , [`fr`, ``]
+            , [`es`, ``]
+            , [`uk`, ``]
+            , [`ru`, ``]
+            , [`it`, ``]
+        ])
+    ],
+    [``,
+        new Map([
+            [`de`, ``]
+            , [`fr`, ``]
+            , [`es`, ``]
+            , [`uk`, ``]
+            , [`ru`, ``]
+            , [`it`, ``]
+        ])
+    ],
     [``,
         new Map([
             [`de`, ``]
@@ -149,6 +454,7 @@ const plutchik_strings = new Map([
         ])
     ],
 ])
+
 
 export function ML(str?: string, lang?: string): string {
     if (lang === undefined) {

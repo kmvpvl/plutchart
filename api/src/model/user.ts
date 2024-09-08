@@ -8,7 +8,7 @@ import TelegramBot from "node-telegram-bot-api";
 import MongoProto from "./mongoproto";
 import { randomInt } from "crypto";
 import { Md5 } from "ts-md5";
-import Match from "./match";
+import Match, { mongoMatches } from "./match";
 
 export type RoleType = "supervisor"|"administrator"|"manage_users"|"manage_content"|"getting_match"|"assessment_request";
 export enum GenderType {
@@ -724,6 +724,29 @@ export default class User extends MongoProto<IUser> {
             });
         }
         await m.addLiked(candidate_uid);
+    }
+
+    async getMutualMatches(): Promise<IUser[]> {
+        const users = await mongoMatches.aggregate([
+            {$match:{uid: this.uid}},
+            {$lookup:{
+                  from: "matches",
+                  localField: "uid",
+                  foreignField: "liked",
+                  as: "matched"
+                }},
+            {$unwind:{path: "$matched"}},
+            {$replaceRoot:{newRoot: "$matched"}},
+            {$lookup:{
+                  from: "users",
+                  localField: "uid",
+                  foreignField: "_id",
+                  as: "userdata"
+                }},
+            {$unwind:{path: "$userdata"}},
+            {$replaceRoot:{newRoot: "$userdata"}}
+          ]);
+          return users;
     }
 
     async getMatchList(dist: number = 3): Promise<Array<IUser>> {

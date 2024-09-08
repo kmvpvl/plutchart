@@ -9,7 +9,7 @@ import checkSettings, { setupTelegramBot } from './model/settings';
 import fs from 'fs';
 import path from 'path';
 import User from './model/user';
-import userinfo, {getinsights, getmatchlist, reminduseraboutinvitation, ogranizationAttachedToUser, reviewemotionaboveothers, supportuserstats, supportsendmessagetouser, supportusersrating, getnextmatchcandidate, skipmatchcandidate, likematchcandidate, setmatchoptions} from './api/user';
+import userinfo, {getinsights, getmatchlist, reminduseraboutinvitation, ogranizationAttachedToUser, reviewemotionaboveothers, supportuserstats, supportsendmessagetouser, supportusersrating, getnextmatchcandidate, skipmatchcandidate, likematchcandidate, setmatchoptions, getmessageswithmutualmatch, sendmessagetomutualmatch} from './api/user';
 import {createorganization, getinvitationstats, getorganizationstats, getusersassessedorganizationcontent, renameorganization, requesttoassignorgtouser} from './api/organization';
 import { Md5 } from 'ts-md5';
 import { Types } from 'mongoose';
@@ -56,6 +56,8 @@ api.register({
     likematchcandidate: async (c, req, res, user) => likematchcandidate(c, req, res, user, bot),
     skipmatchcandidate: async (c, req, res, user) => skipmatchcandidate(c, req, res, user, bot),
     setmatchoptions: async (c, req, res, user) => setmatchoptions(c, req, res, user, bot),
+    getmessageswithmutualmatch: async (c, req, res, user) => getmessageswithmutualmatch(c, req, res, user, bot),
+    sendmessagetomutualmatch: async (c, req, res, user) => sendmessagetomutualmatch(c, req, res, user, bot),
     getcontentstatistics: async (c, req, res, user) => getcontentstatistics(c, req, res, user),
     getinsights: async (c, req, res, user) => getinsights(c, req, res, user),
     reviewemotionaboveothers: async (c, req, res, user) => reviewemotionaboveothers(c, req, res, user),
