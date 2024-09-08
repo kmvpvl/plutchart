@@ -1,16 +1,21 @@
-import { PipelineStage, Schema, Types, model } from "mongoose";
-import colours from "./colours";
+import { Mongoose, PipelineStage, Schema, Types, model } from "mongoose";
 import { ContentGroup, IContent, mongoContent, mongoContentGroup, SourceType } from "./content";
 import PlutchikError from "./error";
-import ML, {MLStringSchema} from "./mlstring";
+import ML from "./mlstring";
 import Organization, { DEFAULT_SESSION_DURATION, IOrganization, ISessionToken, mongoOrgs, mongoSessionTokens } from "./organization";
-import Assessment, { IVector, mongoAssessments } from "./assessment";
+import Assessment, { IEmotionVector, mongoAssessments } from "./assessment";
 import TelegramBot from "node-telegram-bot-api";
 import MongoProto from "./mongoproto";
 import { randomInt } from "crypto";
 import { Md5 } from "ts-md5";
+import Match, { mongoMatches } from "./match";
 
 export type RoleType = "supervisor"|"administrator"|"manage_users"|"manage_content"|"getting_match"|"assessment_request";
+export enum GenderType {
+    male = "male",
+    female = "female",
+    other = "other"
+}
 
 export interface IUserStats {
     userData: IUser;
@@ -49,6 +54,27 @@ export interface IAssignOrg {
   closedate?: Date;
 }
 
+export interface IDatingSettings {
+    readytomatch: boolean;
+    lookingfor?: {
+        gender?: GenderType;
+        birthdateFrom?: Date;
+        birthdateTo?: Date;
+        atLeastAssessmentsCount?: number;
+        commonAssessedContentItems?: number;
+        locationDistance?:number;
+        language?: string;
+    }
+}
+
+interface IUserLocation {
+    country?: string;
+    coords?: {
+        longitude: number;
+        latitude: number;
+    }
+}
+
 export interface IUser {
     _id?: Types.ObjectId;
     name?: string;
@@ -57,13 +83,14 @@ export interface IUser {
     birthdateapproximately?: boolean;
     nativelanguage?: string;
     secondlanguages?: Array<string>,
-    location?: any;
-    gender?: string;
+    location?: IUserLocation;
+    gender?: GenderType;
     maritalstatus?: string;
     features?: string;
     assignedgroups?: Array<IAssignGroup>;
     assignedorgs?: Array<IAssignOrg>;
     studygroup?: string;
+    datingsettings?: IDatingSettings;
     blocked: boolean;
     auth_code_hash?: string;
     created: Date;
@@ -75,8 +102,14 @@ export interface IUser {
 }
 
 interface IObserveAssessments {
-    ownVector: IVector;
-    othersVector: IVector;
+    /// !!! must be re implemented
+    vectors?: {
+        my: IEmotionVector
+        others: IEmotionVector
+        delta: IEmotionVector
+    }
+    ownVector: IEmotionVector;
+    othersVector: IEmotionVector;
 }
 
 export const UserSchema = new Schema({
@@ -90,6 +123,7 @@ export const UserSchema = new Schema({
     gender: {type: String, require: false},
     maritalstatus: {type: String, require: false},
     features: {type: String, require: false},
+    datingsettings: {type: Object, require: false},
     assignedgroups: {type: Array, require: false},
     assignedorgs: {type: Array, require: false},
     awaitcommanddata: {type: String, require: false},
@@ -107,6 +141,10 @@ export default class User extends MongoProto<IUser> {
     constructor(id?: Types.ObjectId, data?: IUser){
         super(mongoUsers, id, data);
     }
+    /**
+     * Blocks or unblocks the user
+     * @param block - true if need to block of false overwise 
+     */
     public async block(block: boolean = true) {
         await this.checkData();
         if (this.data) this.data.blocked = block;
@@ -164,7 +202,7 @@ export default class User extends MongoProto<IUser> {
         await this.save();
     }
 
-    public async setGender(gender?: string) {
+    public async setGender(gender?: GenderType) {
         await this.checkData();
         if (this.data) {
             this.data.gender = gender;
@@ -181,7 +219,7 @@ export default class User extends MongoProto<IUser> {
         await this.save();
     }
 
-    public async setLocation(location?: any) {
+    public async setLocation(location?: IUserLocation) {
         await this.checkData();
         if (this.data) {
             this.data.location = location;
@@ -217,6 +255,8 @@ export default class User extends MongoProto<IUser> {
         }
         await this.save();
     }
+
+
     public async deleteTgUser(){
         await this.checkData();
         if (this.data) {
@@ -526,6 +566,189 @@ export default class User extends MongoProto<IUser> {
           ]);
         return a;
     }
+    
+    async nextMatch(uid?: Types.ObjectId): Promise<IUser>{
+        const pipeline: PipelineStage[] = [];
+        if (uid === undefined) pipeline.push(
+            //collecting _id of all previous liked or skipped persons
+            {$lookup:{
+                  from: "matches",
+                  pipeline: [
+                    {$match: {uid: this.uid}
+                    }, {$addFields: {alluids: {$concatArrays: ["$skipped","$liked"]}}
+                    }, {$project: {alluids: 1}
+                    }],
+                  localField: "",
+                  foreignField: "",
+                  as: "res"}},
+            // adding list if users _ids to every document   
+            {$addFields:{excludeuids: {$getField: {field: "alluids",input: {$first: "$res"}}}}},
+            // filter users by list 
+            {$match:{$expr: {$not: {$in: ["$uid",{$concatArrays: [{$ifNull: ["$excludeuids", []]},[this.uid]]}]}}}},
+        ); else pipeline.push(
+            {$match: {uid:uid}}
+        );
+        pipeline.push(
+            // create intersection by the same aseessed content items
+            {$lookup:{
+                  from: "assessments",
+                  pipeline: [{$match: {uid: this.uid}}],
+                  localField: "cid",
+                  foreignField: "cid",
+                  as: "intersection"}},
+            // cut users who has no common assessed content items
+            {$match:{$expr: {$gt: [{$size: "$intersection"},0]}}},
+            // calc count of common assessed content items
+            {$group:{_id: "$uid",commonContentAssessmentsCount: {$count: {}}}},
+            {$sort:{commonContentAssessmentsCount: -1}},
+            // and cut biggest one
+            {$limit:1},
+            // dress _id by data from User document
+            {$lookup:{
+                  from: "users",
+                  localField: "_id",
+                  foreignField: "_id",
+                  as: "userinfo"
+                }},
+            {$unwind:{path: "$userinfo"}},
+            {$addFields:{"userinfo.commonContentAssessmentsCount":"$commonContentAssessmentsCount"}},
+            {$replaceRoot:{newRoot: "$userinfo"}}
+        );
+        const users = await mongoAssessments.aggregate(pipeline);
+        if (users.length !== 1) {
+            throw new PlutchikError("user:notfound", `nextMatch for user _id = '${this.uid}'`);
+        }
+        return users[0];
+    }
+
+    async getDeltaMatch(candidate: IUser): Promise<any> {
+        const delta = await mongoAssessments.aggregate([
+            {$match: {"uid": this.uid}},
+            {$lookup:{
+                  from: "assessments",
+                  pipeline: [{$match: {uid: candidate._id}}],
+                  localField: "cid",
+                  foreignField: "cid",
+                  as: "candidate"}},
+           {$match: {$expr: {$ne: [{$size: "$candidate"}, 0]}}},
+           {$unwind: {path: "$candidate",}},
+           {$group: {_id: "",
+            joy: {$sum: "$vector.joy"},
+            trust: {$sum: "$vector.trust"},
+            fear: {$sum: "$vector.fear"},
+            surprise: {$sum: "$vector.surprise"},
+            sadness: {$sum: "$vector.sadness"},
+            disgust: {$sum: "$vector.disgust"},
+            anger: {$sum: "$vector.anger"},
+            anticipation: {$sum: "$vector.anticipation"},
+            c_joy: {$sum: "$candidate.vector.joy"},
+            c_trust: {$sum: "$candidate.vector.trust"},
+            c_fear: {$sum: "$candidate.vector.fear"},
+            c_surprise: {$sum: "$candidate.vector.surprise"},
+            c_sadness: {$sum: "$candidate.vector.sadness"},
+            c_disgust: {$sum: "$candidate.vector.disgust"},
+            c_anger: {$sum: "$candidate.vector.anger"},
+            c_anticipation: {$sum: "$candidate.vector.anticipation"},
+           }},
+           {$addFields: {
+             "vector.joy": "$joy",
+             "vector.trust": "$trust",
+             "vector.fear": "$fear",
+             "vector.surprise": "$surprise",
+             "vector.sadness": "$sadness",
+             "vector.disgust": "$disgust",
+             "vector.anger": "$anger",
+             "vector.anticipation": "$anticipation",
+             "candidate.joy": "$c_joy",
+             "candidate.trust": "$c_trust",
+             "candidate.fear": "$c_fear",
+             "candidate.surprise": "$c_surprise",
+             "candidate.sadness": "$c_sadness",
+             "candidate.disgust": "$c_disgust",
+             "candidate.anger": "$c_anger",
+             "candidate.anticipation": "$c_anticipation",
+             "delta.joy": {$subtract: ["$c_joy", "$joy"]},
+             "delta.trust": {$subtract: ["$c_trust", "$trust"]},
+             "delta.fear": {$subtract: ["$c_fear", "$fear"]},
+             "delta.surprise": {$subtract: ["$c_surprise", "$surprise"]},
+             "delta.sadness": {$subtract: ["$c_sadness", "$sadness"]},
+             "delta.disgust": {$subtract: ["$c_disgust", "$disgust"]},
+             "delta.anger": {$subtract: ["$c_anger", "$anger"]},
+             "delta.anticipation": {$subtract: ["$c_anticipation", "$anticipation"]}
+           }},
+           {$project:{vector:1, candidate:1, delta:1}}
+        ]);
+        if (delta.length !== 1) {
+            throw new PlutchikError("user:match", `User _id = '${this.uid}', candidate _id = '${candidate._id}'`);
+        }    
+        return delta[0];
+    }
+
+    async setMatchOptions(options: IDatingSettings, clearskippedlist?: boolean, clearlikedlist?: boolean, resetall?: boolean) {
+        await this.checkData();
+        if (this.data) {
+            if (resetall) this.data.datingsettings = {readytomatch: true};
+            if (clearskippedlist || clearlikedlist) {
+                const match = await Match.getByUid(this.uid);
+                if (clearskippedlist) await match.clearSkipped();
+                if (clearlikedlist) await match.clearLiked();
+            }
+            this.data.datingsettings = options;
+            await this.save();
+        }
+    }
+
+    async skipMatchCandidate(candidate_uid: Types.ObjectId) {
+        let m: Match;
+        try {
+            m = await Match.getByUid(this.uid);
+        } catch(e: any){
+            m = new Match(undefined, {
+                uid: this.uid,
+                skipped: [],
+                liked: []
+            });
+        }
+        await m.addSkipped(candidate_uid);
+    }
+    
+    async likeMatchCandidate(candidate_uid: Types.ObjectId) {
+        let m: Match;
+        try {
+            m = await Match.getByUid(this.uid);
+        } catch(e: any){
+            m = new Match(undefined, {
+                uid: this.uid,
+                skipped: [],
+                liked: []
+            });
+        }
+        await m.addLiked(candidate_uid);
+    }
+
+    async getMutualMatches(): Promise<IUser[]> {
+        const users = await mongoMatches.aggregate([
+            {$match:{uid: this.uid}},
+            {$lookup:{
+                  from: "matches",
+                  localField: "uid",
+                  foreignField: "liked",
+                  as: "matched"
+                }},
+            {$unwind:{path: "$matched"}},
+            {$replaceRoot:{newRoot: "$matched"}},
+            {$lookup:{
+                  from: "users",
+                  localField: "uid",
+                  foreignField: "_id",
+                  as: "userdata"
+                }},
+            {$unwind:{path: "$userdata"}},
+            {$replaceRoot:{newRoot: "$userdata"}}
+          ]);
+          return users;
+    }
+
     async getMatchList(dist: number = 3): Promise<Array<IUser>> {
         const u = await mongoAssessments.aggregate([
             {'$match': {'uid': this.uid}

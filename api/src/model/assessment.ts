@@ -3,7 +3,10 @@ import colours from "./colours";
 import PlutchikError from "./error";
 import MongoProto from "./mongoproto";
 
-export interface IVector {
+/**
+ * 8-dimensional emotional vector
+ */
+export interface IEmotionVector {
     joy?: number;
     trust?: number;
     fear?: number;
@@ -19,7 +22,7 @@ export interface IAssessment {
     uid?: Types.ObjectId; // user ID, required but may be undefined. userid posted by security schema of call
     assignid?: Types.ObjectId;
     cid: Types.ObjectId; // content ID
-    vector: IVector,
+    vector: IEmotionVector,
     tags?: Array<string>; // tags from user
     rating?: number; // value of assessed content item for match with others
     created?: Date;

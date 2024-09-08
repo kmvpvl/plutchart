@@ -347,6 +347,50 @@ function vector_sub(v1, v2) {
         vv2 = v2[emotions[i]]?v2[emotions[i]]:0;
         ret[emotions[i]] = vv1 - vv2;
     }
+
+    function align(v) {
+        if (v.joy - v.sadness > 0) {
+            v.joy = v.joy - v.sadness
+            v.sadness = 0;
+        } else {
+            v.sadness = v.sadness - v.joy;
+            v.joy = 0;
+        }
+        if (v.trust - v.disgust > 0) {
+            v.trust = v.trust - v.disgust;
+            v.disgust = 0;
+        } else {
+            v.disgust = v.disgust - v.trust;
+            v.trust = 0;
+        }
+        if (v.fear - v.anger > 0) {
+            v.fear = v.fear - v.anger;
+            v.anger = 0;
+        } else {
+            v.anger = v.anger - v.fear;
+            v.fear = 0;
+        }
+        if (v.surprise - v.anticipation > 0) {
+            v.surprise = v.surprise - v.anticipation;
+            v.anticipation = 0;
+        } else {
+            v.anticipation = v.anticipation - v.surprise
+            v.anticipation = 0;
+        }
+        return v;
+    }
+    function norm (v) {
+        const arr = Object.entries(v);
+        const mx = arr.reduce((pEl, cEl)=>pEl[1]>cEl[1]?pEl:cEl, [0, -1])[1];
+        for (const el of arr) {
+            v[el[0]] = el[1] / mx;
+            v[el[0]] = v[el[0]] < 0.1? 0.0 : v[el[0]];
+        }
+        return v;
+    }
+
+    align(ret); norm(ret);
+
     return ret;
 }
 
