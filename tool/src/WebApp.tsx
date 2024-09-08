@@ -4,6 +4,11 @@ import Assess, { ITGLoginInfo } from "./components/assess/assess";
 import { Pending, Toaster } from "plutchik-reactjs-components";
 import TGLogin, {LoginFormStates} from "./components/loginForm/loginForm";
 import { IServerInfo } from "./model/common";
+import Match from "./components/match/match";
+export interface IWebAppProps {
+    mode: string;
+    params: URLSearchParams;
+}
 export interface IWebAppState {
     tgLoginInfo: ITGLoginInfo
 }
@@ -12,7 +17,7 @@ declare global {
         Telegram: any;
     }
 }
-export default class WebApp extends React.Component <{mode: string}, IWebAppState> {
+export default class WebApp extends React.Component <IWebAppProps, IWebAppState> {
     toastsRef: React.RefObject<Toaster> = React.createRef();
     pendingRef: React.RefObject<Pending> = React.createRef();
     loginRef: React.RefObject<TGLogin> = React.createRef();
@@ -36,13 +41,7 @@ export default class WebApp extends React.Component <{mode: string}, IWebAppStat
             this.setState({tgLoginInfo: tgLoginInfo});
         }
     }
-    render(): ReactNode {
-        window.Telegram.WebApp.expand();
-        //window.Telegram.WebApp.initDataUnsafe.user.id
-        //window.Telegram.WebApp.initData
-        //this.loginRef.current?.serverInfo.sessiontoken
-        //this.loginRef.current?.serverInfo.tguserid
-        //debugger
+    renderAssess(): ReactNode {
         return <div className="webapp-container">
             {this.state.tgLoginInfo.tguserid?
             /** Auth by telegram */
@@ -56,5 +55,27 @@ export default class WebApp extends React.Component <{mode: string}, IWebAppStat
             <TGLogin onError={()=>{}} onStateChanged={this.onLogged.bind(this)} ref={this.loginRef}/>
             </>}
         </div>
+    }
+    renderMatch(): ReactNode {
+        return <div className="webapp-container">
+            {this.state.tgLoginInfo.tguserid?
+            /** Auth by telegram */
+            <>
+            <Match tgLoginInfo={this.state.tgLoginInfo} toaster={this.toastsRef} pending={this.pendingRef} uid={this.props.params.get("uid") !== null?this.props.params.get("uid")as string:undefined}/>
+            <Toaster ref={this.toastsRef} placesCount={2}/>
+            <Pending ref={this.pendingRef}/>
+            </>:
+            /* Not from Telegram */
+            <>
+            <TGLogin onError={()=>{}} onStateChanged={this.onLogged.bind(this)} ref={this.loginRef}/>
+            </>}
+        </div>
+    }
+    render(): ReactNode {
+        window.Telegram.WebApp.expand();
+        switch(this.props.mode) {
+            case 'match': return this.renderMatch(); 
+            default: return this.renderAssess();
+        }
     }
 }

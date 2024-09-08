@@ -418,6 +418,30 @@ const plutchik_strings = new Map([
     ,   [`uk`, `Мова змінена`]
     ,   [`ru`, `Язык изменен`]
         ])    
+    ], [`Find a like-minded person`,
+        new Map([
+        [`de`, `Finden Sie eine gleichgesinnte Person`]
+    ,   [`fr`, `Trouvez une personne partageant les mêmes idées`]
+    ,   [`es`, `Encuentra una persona con ideas afines`]
+    ,   [`uk`, `Знайти однодумця`]
+    ,   [`ru`, `Найти единомышленника`]
+        ])    
+    ], [`I'm ready to date`,
+        new Map([
+        [`de`, `Ich bin bereit für ein Date`]
+    ,   [`fr`, `Je suis prêt à sortir avec quelqu'un`]
+    ,   [`es`, `Estoy listo para tener una cita`]
+    ,   [`uk`, `Я готова зустрічатися`]
+    ,   [`ru`, `Я готов к свиданиям`]
+        ])    
+    ], [`I'm not ready to date`,
+        new Map([
+        [`de`, `Ich bin nicht bereit für ein Date`]
+    ,   [`fr`, `Je ne suis pas prêt à sortir avec quelqu'un`]
+    ,   [`es`, `No estoy lista para tener una cita`]
+    ,   [`uk`, `Я не готова до побачень`]
+    ,   [`ru`, `Я не готов к свиданиям`]
+        ])    
     ]
 ]);
 

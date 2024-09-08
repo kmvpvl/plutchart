@@ -327,6 +327,131 @@ paths:
       responses:
         '200':
           description: OK
+  /getnextmatchcandidate:
+    description: Reveals next most probably match candidate
+    post:
+      operationId: getnextmatchcandidate
+      responses:
+        '200':
+          description: OK
+  /setmatchoptions:
+    description: Changes match settings
+    post:
+      operationId: setmatchoptions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                resetall:
+                  description: if true reset all settings before set
+                  type: boolean
+                clearskippedlist:
+                  type: boolean
+                clearlikedlist:
+                  type: boolean
+                readytomatch:
+                  description: is user ready to match
+                  type: boolean
+                lookingfor:
+                  description: filters to search candidates
+                  type: object
+                  properties:
+                    gender:
+                      description: which gender searching for
+                      type: string
+                    birthdateFrom:
+                      description: The low edge of age for searching
+                      type: string
+                    birthdateTo:
+                      description: The high edge of age for searching
+                      type: string
+                    atLeastAssessmentsCount:
+                      description: The low edge of count of any assessments candidate has
+                      type: number
+                    commonAssessedContentItems:
+                      description: The low edge of count of common assessments
+                      type: number
+                    locationDistance:
+                      description: The maximal distance in meters
+                      type: number
+                    language:
+                      description: Language of candidate
+      responses:
+        '200':
+          description: OK
+  /skipmatchcandidate:
+    description: Adds user to skipped list
+    post:
+      operationId: skipmatchcandidate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                candidateid:
+                  type: string
+              required:
+                - candidateid
+      responses:
+        '200':
+          description: OK
+  /getmessageswithmutualmatch:
+    description: Loads the messages with mutual match person
+    post:
+      operationId: getmessageswithmutualmatch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uid:
+                  type: string
+              required:
+                - uid
+      responses:
+        '200':
+          description: OK
+  /sendmessagetomutualmatch:
+    description: Sends message and notification to mutual match person
+    post:
+      operationId: sendmessagetomutualmatch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                to:
+                  type: array
+                text: 
+                  type: string
+              required:
+                - to
+                - text
+      responses:
+        '200':
+          description: OK
+  /likematchcandidate:
+    description: Adds user to liked list
+    post:
+      operationId: likematchcandidate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                candidateid:
+                  type: string
+              required:
+                - candidateid
+      responses:
+        '200':
+          description: OK
   /addcontent:
     description: Add new content item
     post:

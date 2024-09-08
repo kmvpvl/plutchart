@@ -51,8 +51,9 @@ export default class MongoProto<T> {
             throw new MongoError("mongo:connect", `err=${JSON.stringify(err)}; uri="${uri}"`)
         });
     }
-    get json() { 
-        return this.data;
+    get json():T {
+        this.checkData(); 
+        return this.data as T;
     }
     protected async checkData(){
         if (!this.data) throw new MongoError("mongo:datanotloaded", `type='${this.constructor.name}}'; id = '${this.id}'`);
