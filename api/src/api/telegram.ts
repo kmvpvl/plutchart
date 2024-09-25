@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import PlutchikError, { ErrorCode } from '../model/error';
 import colours from "../model/colours";
 import TelegramBot, { InlineKeyboardButton} from 'node-telegram-bot-api';
-import Organization, { IOrganization, IResponseToInvitation, mongoOrgs } from '../model/organization';
+import Organization, { IInvitationToAssess, IOrganization, IResponseToInvitation, mongoOrgs } from '../model/organization';
 import Content, { ContentGroup, IContent, mongoContent } from '../model/content';
 import User, { GenderType, mongoUsers } from '../model/user';
 import { google } from 'googleapis';
@@ -622,11 +622,13 @@ async function command_process(tgData: TelegramBot.Update, bot: TelegramBot, use
     for (let [i, c] of Object.entries(commands as Array<TelegramBot.MessageEntity>)) {
         const command_name = tgData.message?.text?.substring(c.offset, c.offset + c.length);
         console.log(`${colours.fg.green}Processing command = '${command_name}'${colours.reset}`);
+        let assign_on_start;
         switch (command_name) {
             case '/start': 
+                assign_on_start = tgData.message?.text?.split(" ")[1];
                 if (user){
                 } else {
-                    const user = new User(undefined, {
+                    user = new User(undefined, {
                         tguserid: tgData.message?.from?.id as number,
                         nativelanguage: tgData.message?.from?.language_code,
                         blocked: false,
@@ -644,6 +646,30 @@ async function command_process(tgData: TelegramBot.Update, bot: TelegramBot, use
             case '/home':
                 if (user === undefined) return false;
                 bot.sendMessage(chat_id, `${ML(`Welcome! This bot is part of a larger system for interaction between psychologists, their clients, employers and their employees. The system is aimed at increasing the comfort of interaction and improving the quality of life of all participants. The bot will allow you to calculate your emotional azimuth, compare it with other participants, while remaining safe. Be sure that information about you will be deleted the moment you ask for it. Read more details about the system here`, lang)} (${process.env.landing_url})\n${ML("Your Telegram ID is ", lang)}${chat_id}\n${ML("Use your Telegram ID to create own content sets or to be invited assessing other sets", lang)}`, {disable_notification: true, reply_markup: {inline_keyboard: mainKeyBoardMenu(lang)}});
+                if (assign_on_start !== undefined) {
+                    const org_on_start = await Organization.getByName(assign_on_start);
+                    if (org_on_start !== undefined) {
+                        const invitation_id = new Types.ObjectId();
+                        const user_inviter = new User(org_on_start.json.participants[0].uid);
+                        await user_inviter.load();
+                        const message = await bot.sendMessage(chat_id, `${user_inviter.json?.name} ${ML(`invites you to assess the set`, user.json?.nativelanguage)} '${org_on_start.json?.name}'.\n${ML('Click the "I Accept" button to express your informed consent that the author of the request will be able to familiarize yourself with your emotional assessments of the proposed content', user.json?.nativelanguage)}\n${ML(`Click the "I Decline" button to reject and cancel the request. The requester will be informed that their request has been rejected`, user.json?.nativelanguage)}`, {reply_markup:{inline_keyboard:[
+                            [{text: ML(`I accept`, user.json?.nativelanguage), callback_data: `accept_org:${invitation_id}`}],
+                            [{text: ML(`I decline`, user.json?.nativelanguage), callback_data: `decline_org:${invitation_id}`}]
+                /* fixed main menu issue and those buttons are redundant            [{text: ML(`I accept`), callback_data: `accept_assignment_org:${org.uid}:${user.uid}`}],
+                            [{text: ML(`I decline`), callback_data: `decline_assignment_org:${org.uid}:${user.uid}`}]
+                 */        ]}});
+                        const invitation: IInvitationToAssess = {
+                            _id: invitation_id,
+                            messageToUser: message,
+                            from_tguserid: user_inviter.json?.tguserid as number,
+                            whom_tguserid: chat_id,
+                            closed: false
+                        }
+                
+                        await org_on_start.logInvitation(invitation);
+                
+                    }
+                }
                 break;
             case '/settings':
                 if (user === undefined) return false;

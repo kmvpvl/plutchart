@@ -230,6 +230,13 @@ export default class Organization extends MongoProto <IOrganization>{
         return users;
     } 
 
+    static async getByName(name: string): Promise <Organization | undefined> {
+        const orgs = await mongoOrgs.aggregate([
+            {$match: {"name": name}}
+        ]);
+        if (orgs.length === 1) return new Organization(undefined, orgs[0]);
+    }
+
     static async getOrganizationByInvitationId(inv_id: Types.ObjectId): Promise<Organization> {
         const orgs = await mongoOrgs.aggregate([
             {'$match': {'invitations._id': inv_id}}
