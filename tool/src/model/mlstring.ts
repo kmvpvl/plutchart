@@ -283,34 +283,34 @@ const plutchik_strings = new Map([
             , [`it`, `L'elenco dei preferiti era chiaro`]
         ])
     ],
-    [``,
+    [`The emotions listed below are the most prevalent in you compared to people who assessed the same content. The emotions are listed in descending order of intensity.`,
         new Map([
-            [`de`, ``]
-            , [`fr`, ``]
-            , [`es`, ``]
-            , [`uk`, ``]
-            , [`ru`, ``]
-            , [`it`, ``]
+            [`de`, `Die unten aufgeführten Emotionen sind bei Ihnen im Vergleich zu Personen, die dieselben Inhalte bewertet haben, am stärksten ausgeprägt. Die Emotionen sind in absteigender Reihenfolge der Intensität aufgeführt.`]
+            , [`fr`, `Les émotions énumérées ci-dessous sont celles qui prévalent le plus chez vous par rapport aux personnes ayant évalué le même contenu. Les émotions sont classées par ordre décroissant d'intensité.`]
+            , [`es`, `Las emociones que se enumeran a continuación son las más frecuentes en usted en comparación con las personas que evaluaron el mismo contenido. Las emociones se enumeran en orden descendente de intensidad.`]
+            , [`uk`, `Перелічені нижче емоції є найбільш поширеними у вас порівняно з людьми, які оцінювали той самий вміст. Емоції перераховані в порядку зменшення інтенсивності.`]
+            , [`ru`, `Перечисленные ниже эмоции являются наиболее распространенными у вас по сравнению с людьми, оценивавшими тот же контент. Эмоции перечислены в порядке убывания интенсивности.`]
+            , [`it`, `Le emozioni elencate di seguito sono le più diffuse in te rispetto alle persone che hanno valutato lo stesso contenuto. Le emozioni sono elencate in ordine decrescente di intensità.`]
         ])
     ],
-    [``,
+    [`Content items' vector`,
         new Map([
-            [`de`, ``]
-            , [`fr`, ``]
-            , [`es`, ``]
-            , [`uk`, ``]
-            , [`ru`, ``]
-            , [`it`, ``]
+            [`de`, `Vektor der Inhaltselemente`]
+            , [`fr`, `Vecteur des éléments de contenu`]
+            , [`es`, `Vector de elementos de contenido`]
+            , [`uk`, `Вектор елементів вмісту`]
+            , [`ru`, `Вектор элементов контента`]
+            , [`it`, `Vettore degli elementi del contenuto`]
         ])
     ],
-    [``,
+    [`My vector`,
         new Map([
-            [`de`, ``]
-            , [`fr`, ``]
-            , [`es`, ``]
-            , [`uk`, ``]
-            , [`ru`, ``]
-            , [`it`, ``]
+            [`de`, `Mein Vektor`]
+            , [`fr`, `Mon vecteur`]
+            , [`es`, `Mi vector`]
+            , [`uk`, `Мій вектор`]
+            , [`ru`, `Мой вектор`]
+            , [`it`, `Il mio vettore`]
         ])
     ],
     [``,

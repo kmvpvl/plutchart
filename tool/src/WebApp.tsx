@@ -5,6 +5,7 @@ import { Pending, Toaster } from "plutchik-reactjs-components";
 import TGLogin, {LoginFormStates} from "./components/loginForm/loginForm";
 import { IServerInfo } from "./model/common";
 import Match from "./components/match/match";
+import InsightsApp from "./components/insights/insightsApp";
 export interface IWebAppProps {
     mode: string;
     params: URLSearchParams;
@@ -71,10 +72,26 @@ export default class WebApp extends React.Component <IWebAppProps, IWebAppState>
             </>}
         </div>
     }
+    renderInsights(): ReactNode {
+        return <div className="webapp-container">
+            {this.state.tgLoginInfo.tguserid?
+            /** Auth by telegram */
+            <>
+            <InsightsApp tgLoginInfo={this.state.tgLoginInfo} toaster={this.toastsRef} pending={this.pendingRef} uid={this.props.params.get("uid") !== null?this.props.params.get("uid")as string:undefined}/>
+            <Toaster ref={this.toastsRef} placesCount={2}/>
+            <Pending ref={this.pendingRef}/>
+            </>:
+            /* Not from Telegram */
+            <>
+            <TGLogin onError={()=>{}} onStateChanged={this.onLogged.bind(this)} ref={this.loginRef}/>
+            </>}
+        </div>
+    }
     render(): ReactNode {
         window.Telegram.WebApp.expand();
         switch(this.props.mode) {
             case 'match': return this.renderMatch(); 
+            case 'insights': return this.renderInsights(); 
             default: return this.renderAssess();
         }
     }
