@@ -293,7 +293,7 @@ export function mainKeyBoardMenu(lang?: string): InlineKeyboardButton[][] {
     return [[
         {text: ML('Assess new content', lang), web_app: {url: `${process.env.tg_web_hook_server}/assess.htm`}}, 
         ], [
-        {text: ML('Insights', lang), web_app: {url: `${process.env.tg_web_app}/tg/insights`}},
+        {text: ML('Insights', lang), web_app: {url: `${process.env.tg_web_hook_server}/insights.htm`}},
         ] , [
         {text: ML(`Find a like-minded person`, lang), web_app: {url: `${process.env.tg_web_app}/match`}},
     ]];
