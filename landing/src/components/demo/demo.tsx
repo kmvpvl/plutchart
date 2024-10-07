@@ -65,7 +65,7 @@ export default class Demo extends React.Component <IDemoProps, IDemoState> {
                     <Chart emotion={Emotion.anger} viewmode="slider" value={this.state.curVector.anger} onChange={this.onVectorChange.bind(this, Emotion.anger)}/>
                     <Chart emotion={Emotion.anticipation} viewmode="slider" value={this.state.curVector.anticipation} onChange={this.onVectorChange.bind(this, Emotion.anticipation)}/>
                 </div>
-                <div><Formula vector={this.state.curVector}/></div>
+                <div><Formula vector={this.state.curVector} showAllComplexEmotions={true}/></div>
             </div>
         </div>
     }
