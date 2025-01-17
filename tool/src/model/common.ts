@@ -31,8 +31,6 @@ console.log(JSON.stringify(process.env));
 }
 export function serverFetch(command: string, method: string, headers?: HeadersInit, body?: BodyInit, successcb?: (res: any)=>void, failcb?: (err: PlutchikError)=>void) {
     const h: Headers = new Headers([
-        ['Access-Control-Allow-Origin', '*'],
-        ["ngrok-skip-browser-warning", "any"],
         ["Content-Type", "application/json; charset=utf-8"]
     ]);
     if (headers) {

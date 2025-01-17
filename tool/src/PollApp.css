@@ -1,0 +1,13 @@
+body {
+    padding: 5px;
+}
+.person-greetings-container, .quiz-container {
+    position: relative;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.person-greetings-text {
+    text-align: center;
+}

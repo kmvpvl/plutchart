@@ -678,7 +678,31 @@ paths:
                 - tguserid
       responses:
         '200':
-          description: OK        
+          description: OK 
+  /poll/get:
+    description: Returns poll by id, but ONLY remaining questions 
+    post:
+      operationId: getPoll
+      security: []      
+      responses:
+        '200':
+          description: OK      
+  /poll/person:
+    description: Creates new person for poll 
+    post:
+      operationId: newPollPerson
+      security: []      
+      responses:
+        '200':
+          description: OK
+  /poll/assess:
+    description: Saves assessment
+    post:
+      operationId: savePollAssessment      
+      security: []      
+      responses:
+        '200':
+          description: OK
   /telegram:
     post:
       operationId: telegram
