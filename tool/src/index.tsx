@@ -4,6 +4,7 @@ import "./index.css";
 import ResearchApp from "./ResearchApp";
 import reportWebVitals from "./reportWebVitals";
 import WebApp from "./WebApp";
+import PollApp from "./PollApp";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -19,7 +20,9 @@ function getContentByPath(): React.ReactNode {
       return <WebApp mode="assess" params={params}/>;
     case "/tg/match":
       return <WebApp mode="match" params={params}/>;
-    default:
+    case "/tg/quiz":
+      return <PollApp params={params}/>;
+      default:
       return <ResearchApp />;
   }
 }
