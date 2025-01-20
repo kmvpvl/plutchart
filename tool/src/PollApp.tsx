@@ -112,12 +112,12 @@ export default class PollApp extends React.Component<IPollAppProps, IPollAppStat
                 <h2>{this.state.poll.questions[0].name}</h2>
                 <h4>{this.state.poll.questions[0].description}</h4>
                 {this.state.poll.questions[0].type === "multi"?
-                <div>{this.state.poll.questions[0].answerOptions.map((option: any, idx: number)=><div key={idx}><input type="checkbox" data-option-number={idx}/>&nbsp;{option.name}</div>)}</div>
+                <div className="question-options-container">{this.state.poll.questions[0].answerOptions.map((option: any, idx: number)=><div key={idx}><input type="checkbox" data-option-number={idx}/>&nbsp;{option.name}</div>)}</div>
                 :
                 <div>{this.state.poll.questions[0].answerOptions.map((option: any, idx: number)=><div key={idx}><input name="answer" type="radio" data-option-number={idx}/>&nbsp;{option.name}</div>)}</div>
                 }
             </div>:<div></div>}
-            <div><button onClick={event=> {
+            <div style={{paddingTop:"1em", textAlign:"center"}}><button onClick={event=> {
                 const response = {
                     personid: this.state.personid,
                     pollid: this.state.poll._id,
