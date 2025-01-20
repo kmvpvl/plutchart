@@ -1,5 +1,6 @@
 body {
     padding: 5px;
+    font-size: 120%;
 }
 .person-greetings-container, .quiz-container {
     position: relative;
@@ -11,3 +12,10 @@ body {
 .person-greetings-text {
     text-align: center;
 }
+
+.question-options-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
