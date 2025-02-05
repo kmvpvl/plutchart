@@ -43,6 +43,7 @@ export interface IPoll {
     description: string;
     questions: Array<IQuestion>;
     structure: IStructLevel[];
+    nextPollChain?: Types.ObjectId;
     created: Date;
     changed?: Date;
 } 
@@ -60,6 +61,7 @@ export const PollSchema = new Schema({
     description: {type: String, required: true},
     questions: {type: Array, required: true},
     structure: {type: Array, required: true},
+    nextPollChain: {type: Types.ObjectId, required: false},
     created: {type: Date, required: true},
     changed: {type: Date, required: false}
 })
