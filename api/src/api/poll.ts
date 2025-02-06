@@ -7,43 +7,48 @@ import { mongoPolls, Person, Poll, PollAssessment } from "../model/poll";
 import PlutchikError from "../model/error";
 
 export async function getPoll(c: any, req: Request, res: Response, user: User, bot: TelegramBot){
-    const pollid = new Types.ObjectId(req.body.pollid);
+    let pollid = new Types.ObjectId(req.body.pollid);
     const personid = req.body.personid;
     console.log(`${colours.fg.blue}Args: pollid = '${pollid}'; personid = '${personid}'${colours.reset}`);
     try {
-        const poll = new Poll(pollid);
-        await poll.load();
-        const polls = await mongoPolls.aggregate([
-            {$match:{_id: new Types.ObjectId(pollid)}},
-            {$unwind:{path: "$questions"}},
-            {$lookup:{
-                  from: "poll_assessments",
-                  localField: "questions.id",
-                  foreignField: "questionid",
-                  as: "answered",
-                  pipeline: [{$match: {personid: new Types.ObjectId(personid), pollid: new Types.ObjectId(pollid)}}]
-                }},
-            {$match:{$expr: {$eq: [{$size: "$answered"},0]}}},
-            {$group:{
-                  _id: "$_id",
-                  name: {
-                    $first: "$name"
-                  },
-                  description: {
-                    $first: "$description"
-                  },
-                  structure: {
-                    $first: "$structure"
-                  },
-                  questions: {
-                    $push: "$questions"
+        while (true){
+          const poll = new Poll(pollid);
+          await poll.load();
+          const polls = await mongoPolls.aggregate([
+              {$match:{_id: new Types.ObjectId(pollid)}},
+              {$unwind:{path: "$questions"}},
+              {$lookup:{
+                    from: "poll_assessments",
+                    localField: "questions.id",
+                    foreignField: "questionid",
+                    as: "answered",
+                    pipeline: [{$match: {personid: new Types.ObjectId(personid), pollid: new Types.ObjectId(pollid)}}]
+                  }},
+              {$match:{$expr: {$eq: [{$size: "$answered"},0]}}},
+              {$group:{
+                    _id: "$_id",
+                    name: {
+                      $first: "$name"
+                    },
+                    description: {
+                      $first: "$description"
+                    },
+                    structure: {
+                      $first: "$structure"
+                    },
+                    questions: {
+                      $push: "$questions"
+                    }
                   }
-                }
-            }
-          ]);
-        if (polls.length === 1) return res.status(200).json(polls[0]);
+              }
+            ]);
+          if (polls.length === 1) return res.status(200).json(polls[0]);
+          if (poll.json.nextPollChain !== undefined) {
+            pollid = poll.json.nextPollChain;
+            continue;
+          }
           throw new Error("Unable return remaining questions")
-
+        }
     } catch (e: any) {
         return res.status(404).json({ok: false, errorRaw: JSON.stringify(e), errorText: `Couldn't return poll uid = '${pollid}'`});
     }
@@ -70,7 +75,7 @@ export async function newPollPerson(c: any, req: Request, res: Response, user: U
 
 export async function savePollAssessment(c: any, req: Request, res: Response, user: User, bot: TelegramBot){
     const personid = req.body.personid;
-    const pollid = req.body.pollid;
+    let pollid = new Types.ObjectId(req.body.pollid);
     const questionid = parseInt(req.body.questionid);
     const choosenoptions = req.body.choosenoptions;
     try {
@@ -87,37 +92,44 @@ export async function savePollAssessment(c: any, req: Request, res: Response, us
             choosenoptions: choosenoptions
         })
         await assessment.save();
-
-        const polls = await mongoPolls.aggregate([
-            {$match:{_id: new Types.ObjectId(pollid)}},
-            {$unwind:{path: "$questions"}},
-            {$lookup:{
-                  from: "poll_assessments",
-                  localField: "questions.id",
-                  foreignField: "questionid",
-                  pipeline: [{$match: {personid: new Types.ObjectId(personid), pollid: new Types.ObjectId(pollid)}}],
-                  as: "answered"
-                }},
-            {$match:{$expr: {$eq: [{$size: "$answered"},0]}}},
-            {$group:{
-                  _id: "$_id",
-                  name: {
-                    $first: "$name"
-                  },
-                  description: {
-                    $first: "$description"
-                  },
-                  structure: {
-                    $first: "$structure"
-                  },
-                  questions: {
-                    $push: "$questions"
-                  }
+        while (true) {
+                const poll = new Poll(pollid);
+                await poll.load();
+              const polls = await mongoPolls.aggregate([
+                {$match:{_id: new Types.ObjectId(pollid)}},
+                {$unwind:{path: "$questions"}},
+                {$lookup:{
+                    from: "poll_assessments",
+                    localField: "questions.id",
+                    foreignField: "questionid",
+                    pipeline: [{$match: {personid: new Types.ObjectId(personid), pollid: new Types.ObjectId(pollid)}}],
+                    as: "answered"
+                    }},
+                {$match:{$expr: {$eq: [{$size: "$answered"},0]}}},
+                {$group:{
+                    _id: "$_id",
+                    name: {
+                        $first: "$name"
+                    },
+                    description: {
+                        $first: "$description"
+                    },
+                    structure: {
+                        $first: "$structure"
+                    },
+                    questions: {
+                        $push: "$questions"
+                    }
+                    }
                 }
+            ]);
+            if (polls.length === 1) return res.status(200).json(polls[0]);
+            if (poll.json.nextPollChain !== undefined) {
+                pollid = poll.json.nextPollChain;
+                continue;
             }
-          ]);
-        if (polls.length === 1) return res.status(200).json(polls[0]);
-          throw new Error("Unable return remaining questions")
+            return res.status(404).json({ok: false, message: "Unable return remaining questions"});
+        }
     } catch (e: any) {
         return res.status(400).json({ok: false, errorRaw: JSON.stringify(e), errorText: `Couldn't save assessment`});
     }
