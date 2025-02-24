@@ -1,9 +1,8 @@
+67a47331783e8285e2149f4a
 {
     "name": "Культура исполнения и измеримости",
     "description": "",
-    "nextPollChain": {
-    "$oid": "67a31f7d277e8b1b36db7809"
-    }, 
+    "nextPollChain": ObjectId("67a472b0783e8285e2149f49"), 
     
     "structure": [
         {"name": "Дирекция"
