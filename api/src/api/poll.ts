@@ -3,7 +3,7 @@ import User from "../model/user";
 import TelegramBot from "node-telegram-bot-api";
 import { Request, Response } from 'express';
 import colours from "../model/colours";
-import { mongoPolls, Person, Poll, PollAssessment } from "../model/poll";
+import { mongoPolls, Opinion, Person, Poll, PollAssessment } from "../model/poll";
 import PlutchikError from "../model/error";
 
 export async function getPoll(c: any, req: Request, res: Response, user: User, bot: TelegramBot){
@@ -70,6 +70,23 @@ export async function newPollPerson(c: any, req: Request, res: Response, user: U
         return res.status(200).json(person.json);
     } catch (e: any) {
         return res.status(400).json({ok: false, errorRaw: JSON.stringify(e), errorText: `Couldn't create new poll person`});
+    }
+}
+
+
+export async function savePollOpinion(c: any, req: Request, res: Response, user: User, bot: TelegramBot){
+    const personid = req.body.personid;
+    const text = req.body.text;
+    try {
+        const op = new Opinion(undefined, {
+            personid: personid,
+            text: text,
+            created: new Date()
+        })
+        await op.save();
+        return res.status(200).json({ok: true});
+    } catch(e: any) {
+        return res.status(400).json({ok: false, errorRaw: JSON.stringify(e), errorText: `Couldn't save opinion`});
     }
 }
 

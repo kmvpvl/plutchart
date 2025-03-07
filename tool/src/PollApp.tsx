@@ -12,6 +12,7 @@ export interface IPollAppState {
     person_level_1?: string;
     person_level_2?: string;
     poll?: any;
+    opinionSaved?: boolean;
 }
 export default class PollApp extends React.Component<IPollAppProps, IPollAppState> {
     state: IPollAppState = {
@@ -50,8 +51,9 @@ export default class PollApp extends React.Component<IPollAppProps, IPollAppStat
         }
         return <div className="person-greetings-container">
             <div className="person-greetings-text">
-                <h2>Уважаемый пользователь!</h2>
-                <h3>Пожалуйста, выберите подразделение, в котором Вы работаете и ответьте на вопросы. Мы не собираем никакую персональную информацию о Вас. Мы собираем только ответы на вопросы</h3>
+                <img src="/tra.jpg" style={{borderRadius:"1em", boxShadow: "silver 0em 0em 1em 0.2em", width:"200px"}}/>
+                <h2>Уважаемые участники опроса! </h2>
+                <h5>Приглашаем вас высказать мнение относительно наблюдаемого вами в реальной действительности на рабочем месте в отношении поведения Ваших коллег.  Опрос займет около 7 минут вашего времени. Опрос анонимный, поэтому не стоит волноваться, что ваши объективные ответы будут использованы против вас. Задача опроса - оценить уровень культуры взаимного уважения и доверия в организации с целью последующего улучшения комфорта среды общения, лидерства и исполнения оперативных и долгосрочных задач. Спасибо за уделенное время</h5>
             </div>
             {this.state.poll !== undefined?<div>
                 <h1>Опрос: {this.state.poll.name}</h1><h4>{this.state.poll.description}</h4>
@@ -111,6 +113,7 @@ export default class PollApp extends React.Component<IPollAppProps, IPollAppStat
             {this.state.poll.questions.length > 0? <div className="question-container">
                 <h2>{this.state.poll.questions[0].name}</h2>
                 <h4>{this.state.poll.questions[0].description}</h4>
+                <h5>Если вы не нашли в ответах варианта, наблюдаемого вами в реальной действительности, пожалуйста, переходите к следующему вопросу, нажав кнопку ниже</h5>
                 {this.state.poll.questions[0].type === "multi"?
                 <div className="question-options-container">{this.state.poll.questions[0].answerOptions.map((option: any, idx: number)=><div key={idx}><input type="checkbox" data-option-number={idx}/>&nbsp;{option.name}</div>)}</div>
                 :
@@ -148,7 +151,27 @@ export default class PollApp extends React.Component<IPollAppProps, IPollAppStat
                     console.log(err);
                 })
             }}>Ответить на вопрос</button></div>
-            </>:<div style={{textAlign:"center"}}><h1>Спасибо за Ваши ответы</h1></div>}
+            </>:<div style={{textAlign:"center"}}><h1>Спасибо за Ваши ответы</h1>
+            {!this.state.opinionSaved?<><h5>У вас есть возможно анонимно оставить мнение о ситуации с культурой взаимного уважения и доверия в организации, высказать пожелания и комментарии. Ваши ответы останутся анонимными. Просьба соблюдать деловую этику в выражении вашего мнения, основанного на реальных наблюдениях фактов в организации в отношении поведения лидеров, коммуникаций между сотрудниками и исполнения оперативных и стратегических задач.</h5>
+            <textarea id="opinion" placeholder="Мое мнение о ситуации в компании" maxLength={2000}/>
+            <button onClick={event=> {
+                this.pendingRef.current?.incUse();
+                serverFetch("poll/opinion", "POST", undefined, JSON.stringify({
+                    personid: this.state.personid,
+                    text: (document.getElementById("opinion") as any).value
+                }), res=> {
+                    //debugger
+                    this.pendingRef.current?.decUse();
+                    const nState = this.state;
+                    nState.opinionSaved = true;
+                    this.setState(nState);
+                    console.log(res);
+                }, err=> {
+                    //debugger
+                    this.pendingRef.current?.decUse();
+                })
+            }}>Отправить</button></>:<></>}
+            </div>}
             <Pending ref={this.pendingRef} />
         </div>
     }
