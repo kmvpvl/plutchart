@@ -19,7 +19,7 @@ import getnextcontentitem from './api/getnextcontentitem';
 import { createHash, createHmac, randomUUID } from 'crypto';
 import colours from './model/colours';
 import ML from './model/mlstring';
-import { getPoll, newPollPerson, savePollAssessment } from './api/poll';
+import { getPoll, newPollPerson, savePollAssessment, savePollOpinion } from './api/poll';
 
 const PORT = process.env.PORT || 8000;
 checkSettings();
@@ -74,6 +74,7 @@ api.register({
     getPoll: async (c, req, res, user) => getPoll(c, req, res, user, bot),
     newPollPerson: async (c, req, res, user) => newPollPerson(c, req, res, user, bot),
     savePollAssessment: async (c, req, res, user) => savePollAssessment(c, req, res, user, bot),
+    savePollOpinion: async (c, req, res, user) => savePollOpinion(c, req, res, user, bot),
     telegram: async (c, req, res, user) => telegram(c, req, res, bot),
 
     headAnswer: async (c, req, res) => headAnswer(c, req, res),

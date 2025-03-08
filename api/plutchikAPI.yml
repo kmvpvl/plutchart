@@ -703,6 +703,14 @@ paths:
       responses:
         '200':
           description: OK
+  /poll/opinion:
+    description: Saves opinion
+    post:
+      operationId: savePollOpinion      
+      security: []      
+      responses:
+        '200':
+          description: OK
   /telegram:
     post:
       operationId: telegram

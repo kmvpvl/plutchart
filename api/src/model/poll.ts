@@ -16,6 +16,12 @@ export interface IQuestion {
     answerOptions: Array<IAnswerOption>;
 }
 
+export interface IOpinion {
+    personid: Types.ObjectId;
+    text: string;
+    created: Date;
+}
+
 export interface IAnswerOption {
     _id: Types.ObjectId;
     sortIndex?: string;
@@ -66,6 +72,12 @@ export const PollSchema = new Schema({
     changed: {type: Date, required: false}
 })
 
+export const OpinionSchema = new Schema({
+    personid: {type: Types.ObjectId, required: true},
+    text: {type: String, required: true},
+    created: {type: Date, required: true},
+})
+
 export const PersonSchema = new Schema({
     level0: {type: String, required: true},
     level1: {type: String, required: false},
@@ -85,10 +97,17 @@ export const PollAssessmentSchema = new Schema({
 export const mongoPollAssessments = model<IPollAssessment>('poll_assessments', PollAssessmentSchema);
 export const mongoPollPersons = model<IPerson>('poll_persons', PersonSchema);
 export const mongoPolls = model<IPoll>('polls', PollSchema);
+export const mongoOpinions = model<IOpinion>('poll_opinions', OpinionSchema);
 
 export class Poll extends MongoProto<IPoll> {
     constructor(id?: Types.ObjectId, data?: IPoll){
         super(mongoPolls, id, data);
+    }
+}
+
+export class Opinion extends MongoProto<IOpinion> {
+    constructor(id?: Types.ObjectId, data?: IOpinion){
+        super(mongoOpinions, id, data);
     }
 }
 export class Person extends MongoProto<IPerson> {

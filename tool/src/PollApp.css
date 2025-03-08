@@ -9,6 +9,7 @@ body {
     margin-right: auto;
     overflow: auto;
     height: 100%;
+    padding-top: 1em;
 }
 
 .person-greetings-text {
