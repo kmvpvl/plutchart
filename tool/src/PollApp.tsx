@@ -77,6 +77,15 @@ export default class PollApp extends React.Component<IPollAppProps, IPollAppStat
                         <option> </option>
                         {struct_level_1.map((el: any, idx: number)=><option key={idx} value={el.name}>{el.name}</option>)}
                     </select>:<></>}
+                    {this.state.person_level_0 !== undefined && struct_level_1 !== undefined && struct_level_2 !== undefined?<select defaultValue={this.state.person_level_2} data-level={1} onChange={event=>{
+                        const nState = this.state;
+                        nState.person_level_2 = event.currentTarget.value;
+                        this.setState(nState);
+                    }}
+                    >
+                        <option> </option>
+                        {struct_level_2.map((el: any, idx: number)=><option key={idx} value={el.name}>{el.name}</option>)}
+                    </select>:<></>}
                 </div>
                 {this.state.person_level_0 !== undefined && (struct_level_1 !== undefined && this.state.person_level_1 !== undefined || struct_level_1 === undefined) && 
                 (struct_level_2 !== undefined && this.state.person_level_2 !== undefined || struct_level_2 === undefined)?<button onClick={event=>{
@@ -152,7 +161,7 @@ export default class PollApp extends React.Component<IPollAppProps, IPollAppStat
                 })
             }}>Ответить на вопрос</button></div>
             </>:<div style={{textAlign:"center"}}><h1>Спасибо за Ваши ответы</h1>
-            {!this.state.opinionSaved?<><h5>У вас есть возможно анонимно оставить мнение о ситуации с культурой взаимного уважения и доверия в организации, высказать пожелания и комментарии. Ваши ответы останутся анонимными. Просьба соблюдать деловую этику в выражении вашего мнения, основанного на реальных наблюдениях фактов в организации в отношении поведения лидеров, коммуникаций между сотрудниками и исполнения оперативных и стратегических задач.</h5>
+            {!this.state.opinionSaved?<><h5>У вас есть возможность анонимно оставить мнение о ситуации с культурой взаимного уважения и доверия в организации, высказать пожелания и комментарии. Ваши ответы останутся анонимными. Просьба соблюдать деловую этику в выражении вашего мнения, основанного на реальных наблюдениях фактов в организации в отношении поведения лидеров, коммуникаций между сотрудниками и исполнения оперативных и стратегических задач.</h5>
             <textarea id="opinion" placeholder="Мое мнение о ситуации в компании" maxLength={2000}/>
             <button onClick={event=> {
                 this.pendingRef.current?.incUse();
