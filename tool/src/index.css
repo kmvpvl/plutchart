@@ -55,6 +55,7 @@ input, button, select, textarea {
   font-size:medium;
   margin: 1px;
   padding: 5px;
+  max-width: 90%;
 }
 
 button {
