@@ -122,7 +122,7 @@ export default class PollApp extends React.Component<IPollAppProps, IPollAppStat
             {this.state.poll.questions.length > 0? <div className="question-container">
                 <h2>{this.state.poll.questions[0].name}</h2>
                 <h4>{this.state.poll.questions[0].description}</h4>
-                <h5>Если вы не нашли в ответах варианта, наблюдаемого вами в реальной действительности, пожалуйста, переходите к следующему вопросу, нажав кнопку ниже</h5>
+                <h5>Если Вы не нашли в ответах варианта, наблюдаемого Вами в реальной действительности, пожалуйста, переходите к следующему вопросу, нажав кнопку ниже</h5>
                 {this.state.poll.questions[0].type === "multi"?
                 <div className="question-options-container">{this.state.poll.questions[0].answerOptions.map((option: any, idx: number)=><div key={idx}><input type="checkbox" data-option-number={idx}/>&nbsp;{option.name}</div>)}</div>
                 :
