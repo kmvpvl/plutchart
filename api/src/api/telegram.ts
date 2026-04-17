@@ -295,7 +295,7 @@ export function mainKeyBoardMenu(lang?: string): InlineKeyboardButton[][] {
         ], [
         {text: ML('Insights', lang), web_app: {url: `${process.env.tg_web_hook_server}/insights.htm`}},
         ] , [
-        {text: ML(`Find a like-minded person`, lang), web_app: {url: `${process.env.tg_web_app}/match`}},
+        {text: ML(`Find a like-minded person`, lang), web_app: {url: `${process.env.tg_web_app}/match.htm`}},
     ]];
 }
 
